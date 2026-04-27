@@ -8,7 +8,7 @@ import { SongCard } from '@/components/SongCard'
 import {
   getPublishedAlbumsByArtistId,
   getPublishedArtistBySlug,
-  getPublishedSongsByAlbumId,
+  getPublishedSongsByArtistId,
 } from '@/lib/music-catalog'
 
 import styles from '@/components/catalog-ui.module.css'
@@ -47,8 +47,7 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
   }
 
   const albums = await getPublishedAlbumsByArtistId(artist.id)
-  const albumSongs = await Promise.all(albums.map((album) => getPublishedSongsByAlbumId(album.id)))
-  const highlightSongs = albumSongs.flat().slice(0, 4)
+  const highlightSongs = await getPublishedSongsByArtistId(artist.id, 20)
 
   return (
     <PageShell>
@@ -114,23 +113,17 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
 
           {highlightSongs.length > 0 ? (
             <div className={styles.cardGrid}>
-              {highlightSongs.map((song) => {
-                const album = albums.find((item) => item.id === song.primary_album_id)
-                if (!album) {
-                  return null
-                }
-
-                return (
-                  <SongCard
-                    key={song.id}
-                    href={`/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`}
-                    title={song.title}
-                    albumTitle={album.title}
-                    trackNumber={song.track_number}
-                    discNumber={song.disc_number}
-                  />
-                )
-              })}
+              {highlightSongs.map(({ song, album }) => (
+                <SongCard
+                  key={song.id}
+                  href={`/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`}
+                  title={song.title}
+                  albumTitle={album.title}
+                  trackNumber={song.track_number}
+                  discNumber={song.disc_number}
+                  showTrackInfo={false}
+                />
+              ))}
             </div>
           ) : (
             <div className={styles.emptyState}>公開済み曲はまだありません。</div>

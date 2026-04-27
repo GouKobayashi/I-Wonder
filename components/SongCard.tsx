@@ -11,6 +11,7 @@ type SongCardProps = {
   trackNumber: number | null
   discNumber: number | null
   showDisc?: boolean
+  showTrackInfo?: boolean
   bodyPreview?: string | null
   isCurrent?: boolean
 }
@@ -22,6 +23,7 @@ export function SongCard({
   trackNumber,
   discNumber,
   showDisc = false,
+  showTrackInfo = true,
   bodyPreview,
   isCurrent = false,
 }: SongCardProps) {
@@ -32,9 +34,11 @@ export function SongCard({
   return (
     <Link className={className} href={href}>
       <div className={styles.cardBody}>
-        <p className={styles.cardEyebrow}>
-          {showDisc ? formatTrackPosition(trackNumber, discNumber) : `Track ${trackNumber ?? '-'}`}
-        </p>
+        {showTrackInfo ? (
+          <p className={styles.cardEyebrow}>
+            {showDisc ? formatTrackPosition(trackNumber, discNumber) : `Track ${trackNumber ?? '-'}`}
+          </p>
+        ) : null}
         <h3 className={styles.cardTitle}>{title}</h3>
         {albumTitle ? <p className={styles.cardSubtitle}>{albumTitle}</p> : null}
         {bodyPreview ? <p className={styles.cardSubtitle}>{bodyPreview}</p> : null}

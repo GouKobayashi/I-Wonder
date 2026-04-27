@@ -435,13 +435,41 @@ export async function createSong(
   }
 
   const supabase = getSupabaseAdmin()
+  let resolvedReleaseDate = releaseDate.value
+
+  if (!resolvedReleaseDate) {
+    const { data: album, error: albumError } = await supabase
+      .from('albums')
+      .select('release_date')
+      .eq('id', primaryAlbumId)
+      .maybeSingle<{ release_date: string | null }>()
+
+    if (albumError) {
+      return {
+        status: 'error',
+        message: normalizeSupabaseErrorMessage(albumError.message),
+      }
+    }
+
+    if (!album) {
+      return {
+        status: 'error',
+        fieldErrors: {
+          primary_album_id: 'album を選択してください。',
+        },
+      }
+    }
+
+    resolvedReleaseDate = album.release_date
+  }
+
   const { data, error } = await supabase
     .from('songs')
     .insert({
       primary_album_id: primaryAlbumId,
       slug,
       title,
-      release_date: releaseDate.value,
+      release_date: resolvedReleaseDate,
       track_number: trackNumber.value,
       disc_number: discNumber.value,
       body_explanation: bodyExplanation,

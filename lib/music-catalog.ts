@@ -133,6 +133,57 @@ export async function getPublishedSongsByAlbumId(albumId: string) {
   return result.data
 }
 
+export async function getPublishedSongsByArtistId(artistId: string, limit = 20) {
+  const albumsResult = await supabase
+    .from('albums')
+    .select('id, slug, title, primary_artist_id, published')
+    .eq('primary_artist_id', artistId)
+    .eq('published', true)
+    .returns<Array<Pick<AlbumRecord, 'id' | 'slug' | 'title' | 'primary_artist_id' | 'published'>>>()
+
+  if (albumsResult.error) {
+    throw new Error(albumsResult.error.message)
+  }
+
+  const albumIds = albumsResult.data.map((album) => album.id)
+
+  if (albumIds.length === 0) {
+    return []
+  }
+
+  const songsResult = await supabase
+    .from('songs')
+    .select(
+      'id, slug, title, release_date, track_number, disc_number, body_explanation, primary_album_id, published',
+    )
+    .in('primary_album_id', albumIds)
+    .eq('published', true)
+    .order('release_date', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .limit(limit)
+    .returns<SongRecord[]>()
+
+  if (songsResult.error) {
+    throw new Error(songsResult.error.message)
+  }
+
+  const albumById = new Map(albumsResult.data.map((album) => [album.id, album]))
+
+  return songsResult.data
+    .map((song) => {
+      const album = albumById.get(song.primary_album_id)
+      if (!album) {
+        return null
+      }
+
+      return {
+        song,
+        album,
+      }
+    })
+    .filter((item): item is { song: SongRecord; album: Pick<AlbumRecord, 'id' | 'slug' | 'title' | 'primary_artist_id' | 'published'> } => item !== null)
+}
+
 export function formatReleaseDate(value: string | null) {
   if (!value) {
     return 'Release TBD'

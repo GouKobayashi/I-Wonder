@@ -185,6 +185,9 @@ export function AlbumForm({ artists }: { artists: ArtistOption[] }) {
       <div className={styles.field}>
         <label htmlFor="release_date">release_date</label>
         <input id="release_date" name="release_date" type="date" />
+        <div className={styles.fieldHint}>
+          <p>未入力の場合は album の release_date を使います。</p>
+        </div>
         <FieldError state={state} name="release_date" />
       </div>
 
