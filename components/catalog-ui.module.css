@@ -1,0 +1,367 @@
+.pageShell {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.shellInner {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 32px 88px 72px;
+}
+
+.stack {
+  display: grid;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 0 18px;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.headerTitle {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.headerLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+
+.headerLink:hover {
+  opacity: 0.7;
+}
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 0;
+  font-size: 14px;
+  color: var(--foreground);
+  line-height: 1.4;
+}
+
+.breadcrumbLink {
+  transition: color 0.2s ease;
+}
+
+.breadcrumbLink:hover {
+  color: var(--foreground);
+}
+
+.breadcrumbCurrent {
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.breadcrumbSeparator {
+  color: var(--foreground);
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding: 18px 0 8px;
+  background: var(--background);
+}
+
+.heroBody {
+  display: grid;
+  gap: 25px;
+}
+
+.heroTitle {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 0;
+}
+
+.externalButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 20px;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: 4px;
+  transition: opacity 0.2s ease;
+}
+
+.externalButtonIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.externalButton:hover {
+  opacity: 0.8;
+}
+
+.externalButtonSpotify {
+  background: #1db954;
+  color: #000000;
+}
+
+.externalButtonYoutube {
+  background: #ff0000;
+  color: #ffffff;
+}
+
+.externalButtonAppleMusic {
+  background: #fa233b;
+  color: #ffffff;
+}
+
+.contentGrid {
+  display: grid;
+  gap: 56px;
+  margin-top: 40px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionTitle {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 40px 24px;
+}
+
+.albumCard,
+.songCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--background);
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.albumCard:hover,
+.songCard:hover {
+  opacity: 0.6;
+}
+
+.albumCover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #f0f0f0;
+}
+
+.albumCoverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.albumCoverFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  color: #a0a0a0;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardEyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.cardSubtitle {
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bodyCard {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 820px;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.bodyQuote {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  margin: 0;
+}
+
+.bodyTranslation {
+  color: var(--foreground);
+  font-size: inherit;
+}
+
+.bodyNote {
+  color: var(--foreground);
+}
+
+.bodyInlineSectionTitle {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  margin: 18px 0 8px;
+}
+
+.bodyLyricPair {
+  display: grid;
+  gap: 6px;
+}
+
+.bodyLyricEn,
+.bodyLyricJa {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.bodyLyricEn {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.bodyLyricJa {
+  color: var(--foreground);
+}
+
+.bodyCallout {
+  border-left: none;
+  background: transparent;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+}
+
+.bodyCalloutBody {
+  color: var(--foreground);
+  font-size: inherit;
+}
+
+.bodySubheading {
+  font-size: inherit;
+  font-weight: 700;
+  line-height: inherit;
+  letter-spacing: inherit;
+  margin-top: 10px;
+}
+
+.bodyList {
+  display: grid;
+  gap: 8px;
+  padding-left: 24px;
+  color: var(--foreground);
+  margin: 16px 0;
+  list-style-type: square;
+}
+
+.bodyList li {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.emptyState {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 48px;
+  }
+
+  .shellInner {
+    padding: 20px 18px 72px;
+  }
+  .cardGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .contentGrid {
+    gap: 60px;
+  }
+}
