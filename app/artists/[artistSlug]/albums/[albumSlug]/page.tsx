@@ -56,15 +56,31 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
   return (
     <PageShell>
       <section className={styles.hero}>
-        <div className={styles.heroBody}>
-          <Breadcrumb
-            items={[
-              { href: '/', label: 'Home' },
-              { href: `/artists/${artist.slug}`, label: artist.name },
-              { label: album.title },
-            ]}
-          />
-          <h1 className={styles.heroTitle}>{album.title}</h1>
+        <div className={styles.heroFeature}>
+          <div className={styles.heroBody}>
+            <Breadcrumb
+              items={[
+                { href: '/', label: 'Home' },
+                { href: `/artists/${artist.slug}`, label: artist.name },
+                { label: album.title },
+              ]}
+            />
+            <div className={styles.heroCopy}>
+              <p className={styles.heroKicker}>{artist.name}</p>
+              <h1 className={styles.heroTitle}>{album.title}</h1>
+            </div>
+          </div>
+
+          <div className={styles.heroMediaColumn}>
+            <div className={styles.albumHeroFrame}>
+              {album.cover_image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img className={styles.albumHeroImage} src={album.cover_image_url} alt={album.title} />
+              ) : (
+                <div className={styles.heroImageFallback}>{album.title}</div>
+              )}
+            </div>
+          </div>
         </div>
         <ExternalLinkButtons links={buildAlbumLinks(artist.name, album.title)} />
       </section>

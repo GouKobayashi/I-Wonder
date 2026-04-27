@@ -93,17 +93,114 @@
   background: var(--background);
 }
 
+.heroFeature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 520px);
+  gap: 36px;
+  align-items: end;
+}
+
+.artistHeroLayout {
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 560px);
+  gap: 48px;
+  align-items: center;
+}
+
 .heroBody {
   display: grid;
   gap: 25px;
+  align-content: start;
+}
+
+.artistHeroBody {
+  position: relative;
+  padding: 18px 0 26px;
+}
+
+.artistHeroBody::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: min(160px, 32%);
+  height: 2px;
+  background: var(--foreground);
+}
+
+.heroCopy {
+  display: grid;
+  gap: 14px;
+}
+
+.artistHeroCopy {
+  max-width: 560px;
+  gap: 18px;
+}
+
+.heroKicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.heroMediaColumn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.artistHeroMediaColumn {
+  align-items: flex-end;
+}
+
+.artistHeroFrame,
+.albumHeroFrame {
+  position: relative;
+  width: min(100%, 520px);
+  background: linear-gradient(145deg, #f3f3f3 0%, #e4e4e4 100%);
+  overflow: hidden;
+}
+
+.artistHeroFrame {
+  aspect-ratio: 1 / 1.06;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 18px 18px 4px 18px;
+}
+
+.albumHeroFrame {
+  aspect-ratio: 1 / 1;
+  border-radius: 24px;
+  box-shadow: 24px 24px 0 #111111;
+}
+
+.heroImageFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #8a8a8a;
+  font-size: clamp(28px, 4vw, 64px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  text-align: center;
 }
 
 .artistHeroImage {
-  width: min(100%, 420px);
-  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
-  border-radius: 4px;
+  filter: saturate(0.92) contrast(1.02);
+}
+
+.albumHeroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .heroTitle {
@@ -111,6 +208,14 @@
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.05em;
+}
+
+.artistHeroTitle {
+  max-width: 7ch;
+  font-size: clamp(54px, 7.2vw, 88px);
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+  text-wrap: balance;
 }
 
 .actions {
@@ -336,13 +441,6 @@
   margin: 10px 0;
 }
 
-.bodySupplementLabel {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .bodySupplementBody {
   color: var(--foreground);
   font-size: inherit;
@@ -382,8 +480,44 @@
 }
 
 @media (max-width: 768px) {
+  .heroFeature {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .artistHeroLayout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .heroMediaColumn {
+    justify-content: flex-start;
+  }
+
+  .artistHeroBody {
+    padding: 8px 0 20px;
+  }
+
+  .artistHeroFrame,
+  .albumHeroFrame {
+    width: min(100%, 420px);
+  }
+
+  .artistHeroFrame {
+    border-radius: 14px 14px 4px 14px;
+  }
+
+  .albumHeroFrame {
+    box-shadow: 14px 14px 0 #111111;
+  }
+
   .heroTitle {
     font-size: 48px;
+  }
+
+  .artistHeroTitle {
+    max-width: none;
+    font-size: clamp(44px, 13vw, 64px);
   }
 
   .shellInner {

@@ -92,10 +92,16 @@ export function SongBody({ body }: { body: string | null }) {
           const rawKey = `${i}-${line}`
           const heading = parseHeading(line)
           if (heading) {
-            if (heading.text.toUpperCase() === 'LYRICS') {
+            const normalizedHeadingText = heading.text.toUpperCase()
+
+            if (normalizedHeadingText === 'LYRICS') {
               sectionMode = 'lyrics'
-            } else if (heading.text.toUpperCase() === 'EXPLANATION') {
+            } else if (normalizedHeadingText === 'EXPLANATION') {
               sectionMode = 'default'
+            }
+
+            if (normalizedHeadingText === 'EXPLANATION') {
+              continue
             }
 
             if (heading.level === 1) {
@@ -135,7 +141,6 @@ export function SongBody({ body }: { body: string | null }) {
             if (supplementLines.length > 0) {
               elements.push(
                 <aside className={styles.bodySupplement} key={rawKey}>
-                  <div className={styles.bodySupplementLabel}>Supplement</div>
                   <div className={styles.bodySupplementBody}>
                     {supplementLines.map((supplementLine, supplementIndex) => (
                       <p key={`${rawKey}-supplement-${supplementIndex}`}>

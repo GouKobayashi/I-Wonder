@@ -53,18 +53,34 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
   return (
     <PageShell>
       <section className={styles.hero}>
-        <div className={styles.heroBody}>
-          <Breadcrumb
-            items={[
-              { href: '/', label: 'Home' },
-              { label: artist.name },
-            ]}
-          />
-          {artist.artist_image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img className={styles.artistHeroImage} src={artist.artist_image_url} alt={artist.name} />
-          ) : null}
-          <h1 className={styles.heroTitle}>{artist.name}</h1>
+        <div className={`${styles.heroFeature} ${styles.artistHeroLayout}`}>
+          <div className={`${styles.heroBody} ${styles.artistHeroBody}`}>
+            <Breadcrumb
+              items={[
+                { href: '/', label: 'Home' },
+                { label: artist.name },
+              ]}
+            />
+            <div className={`${styles.heroCopy} ${styles.artistHeroCopy}`}>
+              <p className={styles.heroKicker}>Artist</p>
+              <h1 className={`${styles.heroTitle} ${styles.artistHeroTitle}`}>{artist.name}</h1>
+            </div>
+          </div>
+
+          <div className={`${styles.heroMediaColumn} ${styles.artistHeroMediaColumn}`}>
+            <div className={styles.artistHeroFrame}>
+              {artist.artist_image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className={styles.artistHeroImage}
+                  src={artist.artist_image_url}
+                  alt={artist.name}
+                />
+              ) : (
+                <div className={styles.heroImageFallback}>{artist.name.slice(0, 1)}</div>
+              )}
+            </div>
+          </div>
         </div>
         <ExternalLinkButtons links={buildArtistLinks(artist.name)} />
       </section>
