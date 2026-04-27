@@ -1,0 +1,175 @@
+.page {
+  min-height: 100vh;
+  background: #f5f5f0;
+  color: #1c1c18;
+}
+
+.container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.stack {
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: #fffef8;
+  border: 1px solid #d7d2c7;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.title {
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.subtitle {
+  color: #5a554c;
+  line-height: 1.6;
+}
+
+.navList {
+  display: grid;
+  gap: 12px;
+}
+
+.navLink {
+  display: block;
+  padding: 14px 16px;
+  border: 1px solid #cfc7b7;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.navLink:hover {
+  border-color: #8a7c5a;
+}
+
+.form {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #bdb5a3;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.field textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.fieldHint {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f4efe5;
+  color: #5a554c;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxRow input {
+  width: 16px;
+  height: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.button,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.button {
+  border: 1px solid #3c372d;
+  background: #3c372d;
+  color: #fffef8;
+}
+
+.secondaryButton {
+  border: 1px solid #bdb5a3;
+  background: #fffef8;
+  color: #1c1c18;
+}
+
+.button:disabled,
+.secondaryButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.messageSuccess,
+.messageError {
+  padding: 12px 14px;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.messageSuccess {
+  border: 1px solid #9bc59d;
+  background: #edf8ee;
+  color: #1b5d2b;
+}
+
+.messageError {
+  border: 1px solid #de9d9d;
+  background: #fff0f0;
+  color: #912d2d;
+}
+
+.fieldError {
+  font-size: 13px;
+  color: #912d2d;
+}
+
+.meta {
+  font-size: 14px;
+  color: #5a554c;
+}
+
+.inlineLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}

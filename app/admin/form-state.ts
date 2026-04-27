@@ -1,0 +1,10 @@
+export type FormState = {
+  status: 'idle' | 'success' | 'error'
+  message?: string
+  fieldErrors?: Record<string, string>
+  createdId?: string
+}
+
+export const INITIAL_FORM_STATE: FormState = {
+  status: 'idle',
+}
