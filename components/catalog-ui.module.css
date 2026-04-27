@@ -23,6 +23,7 @@
   gap: 12px;
   min-height: 40px;
   padding: 0 0 18px;
+  border-bottom: 1px solid rgba(18, 42, 55, 0.12);
 }
 
 .headerBrand {
@@ -33,10 +34,11 @@
 }
 
 .headerTitle {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.04em;
+  color: #000000;
 }
 
 .headerLink {
@@ -91,6 +93,29 @@
   gap: 25px;
   padding: 18px 0 8px;
   background: var(--background);
+}
+
+.homeHero {
+  padding: 16px 0 8px;
+}
+
+.homeHeroBody {
+  display: grid;
+  gap: 10px;
+  max-width: 720px;
+}
+
+.homeHeroTitle {
+  font-size: clamp(26px, 3.2vw, 36px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.homeHeroLead {
+  max-width: 640px;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1.8;
 }
 
 .heroFeature {
@@ -164,13 +189,13 @@
 .artistHeroFrame {
   aspect-ratio: 1 / 1.06;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 18px 18px 4px 18px;
+  border-radius: 8px;
 }
 
 .albumHeroFrame {
   aspect-ratio: 1 / 1;
-  border-radius: 24px;
-  box-shadow: 24px 24px 0 #111111;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 .heroImageFallback {
@@ -201,6 +226,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  filter: saturate(0.92) contrast(1.02);
 }
 
 .heroTitle {
@@ -504,15 +530,27 @@
   }
 
   .artistHeroFrame {
-    border-radius: 14px 14px 4px 14px;
+    border-radius: 8px;
   }
 
   .albumHeroFrame {
-    box-shadow: 14px 14px 0 #111111;
+    border-radius: 8px;
   }
 
   .heroTitle {
     font-size: 48px;
+  }
+
+  .homeHero {
+    padding: 12px 0 4px;
+  }
+
+  .homeHeroTitle {
+    font-size: clamp(22px, 8vw, 30px);
+  }
+
+  .homeHeroLead {
+    font-size: 16px;
   }
 
   .artistHeroTitle {

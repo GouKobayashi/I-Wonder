@@ -11,9 +11,12 @@ export default async function HomePage() {
 
   return (
     <PageShell>
-      <section className={styles.hero}>
-        <div className={styles.heroBody}>
-          <h1 className={styles.heroTitle}>I WONDER</h1>
+      <section className={styles.homeHero}>
+        <div className={styles.homeHeroBody}>
+          <h1 className={styles.homeHeroTitle}>I Wonderへようこそ</h1>
+          <p className={styles.homeHeroLead}>
+            I Wonderは、外国圏の音楽を歌詞、バックグラウンド、コンテキストから読み解くための楽曲データベースです。
+          </p>
         </div>
       </section>
 

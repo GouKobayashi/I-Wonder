@@ -4,6 +4,8 @@
   --card-bg: #ffffff;
   --card-border: #000000;
   --text-muted: #666666;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Yu Gothic", "Yu Gothic UI", Meiryo, "Noto Sans JP", sans-serif;
 }
 
 html {
@@ -22,6 +24,9 @@ body {
   flex-direction: column;
   color: var(--foreground);
   background: var(--background);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -7,13 +7,9 @@ export function Header() {
     <header className={styles.header}>
       <div className={styles.headerBrand}>
         <Link className={styles.headerTitle} href="/">
-          I Wonder
+          IW
         </Link>
       </div>
-
-      <Link className={styles.headerLink} href="/artists/ye">
-        Explore Ye
-      </Link>
     </header>
   )
 }

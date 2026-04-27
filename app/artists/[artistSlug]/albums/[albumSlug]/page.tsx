@@ -56,8 +56,8 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
   return (
     <PageShell>
       <section className={styles.hero}>
-        <div className={styles.heroFeature}>
-          <div className={styles.heroBody}>
+        <div className={`${styles.heroFeature} ${styles.artistHeroLayout}`}>
+          <div className={`${styles.heroBody} ${styles.artistHeroBody}`}>
             <Breadcrumb
               items={[
                 { href: '/', label: 'Home' },
@@ -65,13 +65,13 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
                 { label: album.title },
               ]}
             />
-            <div className={styles.heroCopy}>
+            <div className={`${styles.heroCopy} ${styles.artistHeroCopy}`}>
               <p className={styles.heroKicker}>{artist.name}</p>
-              <h1 className={styles.heroTitle}>{album.title}</h1>
+              <h1 className={`${styles.heroTitle} ${styles.artistHeroTitle}`}>{album.title}</h1>
             </div>
           </div>
 
-          <div className={styles.heroMediaColumn}>
+          <div className={`${styles.heroMediaColumn} ${styles.artistHeroMediaColumn}`}>
             <div className={styles.albumHeroFrame}>
               {album.cover_image_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
