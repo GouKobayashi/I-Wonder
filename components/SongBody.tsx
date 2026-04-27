@@ -1,62 +1,71 @@
 import styles from './catalog-ui.module.css'
 
-function isQuoteLine(line: string) {
-  return (
-    line.startsWith('"') ||
-    line.startsWith("'") ||
-    line.startsWith('“') ||
-    line.startsWith('‘') ||
-    /^[A-Za-z0-9\s'",.!?()\-:;]+$/.test(line)
-  )
+function isFullLineTranslation(line: string) {
+  return /^\*(?!\*)(.+)\*$/.test(line)
 }
 
-function isTranslationLine(line: string) {
-  return (
-    line.includes('和訳') ||
-    /(?:^|[：:])\s*訳/.test(line) ||
-    line.includes('→')
-  )
+function getTranslationText(line: string) {
+  if (isFullLineTranslation(line)) {
+    return line.replace(/^\*/, '').replace(/\*$/, '').trim()
+  }
+
+  return null
 }
 
-function isHeadingLine(line: string) {
-  return /^#{1,3}\s+/.test(line) || (line.length <= 32 && /[:：]$/.test(line))
-}
-
-function isJapaneseLine(line: string) {
-  return /[ぁ-んァ-ン一-龠々ー]/.test(line)
-}
-
-function normalizeLine(line: string) {
-  const withoutPrefix = line
-    .replace(/^(\-|\*|•)\s+/, '')
-    .replace(/^・\s*/, '')
-    .replace(/^>\s+/, '')
-    .replace(/^>\s*/, '')
-
-  const withoutInlineMarks = withoutPrefix
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/__(.+?)__/g, '$1')
-    .replace(/\*(.+?)\*/g, '$1')
-    .replace(/_(.+?)_/g, '$1')
-    .replace(/`(.+?)`/g, '$1')
-
-  return withoutInlineMarks
-    .replace(/^["'“‘]+/, '')
-    .replace(/["'”’]+$/, '')
-    .trim()
-}
-
-function parseCalloutLine(line: string) {
-  const match = line.match(
-    /^(補足|注|注意|メモ|NOTE|Note|TIP|Tip|TIPS|Tips)\s*[：:]\s*(.+)$/u,
-  )
+function parseHeading(line: string) {
+  const match = line.match(/^(#{1,6})\s+(.+)$/)
   if (!match) {
     return null
   }
 
-  const [, rawTitle, rawBody] = match
-  const title = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1).toLowerCase()
-  return { title, body: rawBody }
+  const [, hashes, text] = match
+  return { level: hashes.length, text: text.trim() }
+}
+
+function isLyricSpeakerLabel(line: string) {
+  return /^\[[^\]]+\]$/.test(line)
+}
+
+function isSupplementLine(line: string) {
+  return line.startsWith('>')
+}
+
+function stripSupplementMarker(line: string) {
+  return line.replace(/^>\s?/, '').trim()
+}
+
+function parseInline(text: string, keyPrefix: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = []
+  const pattern = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  for (match = pattern.exec(text); match; match = pattern.exec(text)) {
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index))
+    }
+
+    const token = match[0]
+    const inner = token.slice(1, -1)
+
+    if (token.startsWith('**') && token.endsWith('**')) {
+      nodes.push(
+        <strong key={`${keyPrefix}-strong-${match.index}`}>{token.slice(2, -2)}</strong>,
+      )
+    } else if (token.startsWith('*') && token.endsWith('*')) {
+      nodes.push(<em key={`${keyPrefix}-em-${match.index}`}>{inner}</em>)
+    } else if (token.startsWith('`') && token.endsWith('`')) {
+      nodes.push(<code key={`${keyPrefix}-code-${match.index}`}>{inner}</code>)
+    }
+
+    lastIndex = match.index + token.length
+  }
+
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex))
+  }
+
+  return nodes
 }
 
 export function SongBody({ body }: { body: string | null }) {
@@ -64,92 +73,119 @@ export function SongBody({ body }: { body: string | null }) {
     return <div className={styles.bodyCard}>未設定</div>
   }
 
-  const lines = body
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-
-  const normalized = lines.map(normalizeLine).filter(Boolean)
+  const lines = body.split('\n')
 
   return (
     <div className={styles.bodyCard}>
       {(() => {
         const elements: React.ReactNode[] = []
-        let lyricsLabelInserted = false
+        let sectionMode: 'default' | 'lyrics' = 'default'
 
-        for (let i = 0; i < normalized.length; i++) {
-          const line = normalized[i]
-          const rawKey = `${line}-${i}`
+        for (let i = 0; i < lines.length; i++) {
+          const rawLine = lines[i]
+          const line = rawLine.trim()
 
-          const callout = parseCalloutLine(line)
-          if (callout) {
-            elements.push(
-              <aside className={styles.bodyCallout} key={rawKey}>
-                <div className={styles.bodyCalloutBody}>{callout.body}</div>
-              </aside>,
-            )
+          if (!line) {
             continue
           }
 
-          if (isHeadingLine(line)) {
-            elements.push(
-              <h3 className={styles.bodySubheading} key={rawKey}>
-                {line.replace(/^#{1,3}\s+/, '').replace(/[:：]$/, '')}
-              </h3>,
-            )
+          const rawKey = `${i}-${line}`
+          const heading = parseHeading(line)
+          if (heading) {
+            if (heading.text.toUpperCase() === 'LYRICS') {
+              sectionMode = 'lyrics'
+            } else if (heading.text.toUpperCase() === 'EXPLANATION') {
+              sectionMode = 'default'
+            }
+
+            if (heading.level === 1) {
+              elements.push(
+                <h2 className={styles.bodySectionHeading} key={rawKey}>
+                  {parseInline(heading.text, rawKey)}
+                </h2>,
+              )
+            } else {
+              elements.push(
+                <h3 className={styles.bodySubheading} key={rawKey}>
+                  {parseInline(heading.text, rawKey)}
+                </h3>,
+              )
+            }
             continue
           }
 
-          const next = normalized[i + 1]
-          const isLyricLike = isQuoteLine(line) || isTranslationLine(line) || isJapaneseLine(line)
-          const nextIsLyricLike =
-            typeof next === 'string' &&
-            (isQuoteLine(next) || isTranslationLine(next) || isJapaneseLine(next))
+          if (isSupplementLine(line)) {
+            const supplementLines: string[] = []
 
-          if (isLyricLike && !lyricsLabelInserted) {
-            elements.push(
-              <div className={styles.bodyInlineSectionTitle} key={`lyrics-label-${i}`}>
-                Lyrics
-              </div>,
-            )
-            lyricsLabelInserted = true
+            while (i < lines.length) {
+              const currentLine = lines[i].trim()
+              if (!currentLine || !isSupplementLine(currentLine)) {
+                break
+              }
+
+              const content = stripSupplementMarker(currentLine)
+              if (content) {
+                supplementLines.push(content)
+              }
+              i += 1
+            }
+
+            i -= 1
+
+            if (supplementLines.length > 0) {
+              elements.push(
+                <aside className={styles.bodySupplement} key={rawKey}>
+                  <div className={styles.bodySupplementLabel}>Supplement</div>
+                  <div className={styles.bodySupplementBody}>
+                    {supplementLines.map((supplementLine, supplementIndex) => (
+                      <p key={`${rawKey}-supplement-${supplementIndex}`}>
+                        {parseInline(supplementLine, `${rawKey}-supplement-${supplementIndex}`)}
+                      </p>
+                    ))}
+                  </div>
+                </aside>,
+              )
+            }
+            continue
           }
 
-          if (isLyricLike && nextIsLyricLike) {
-            const a = line
-            const b = next
+          if (sectionMode === 'lyrics') {
+            if (isLyricSpeakerLabel(line)) {
+              elements.push(
+                <div className={styles.bodyLyricLabel} key={rawKey}>
+                  {line}
+                </div>,
+              )
+              continue
+            }
 
-            const aIsJa = isJapaneseLine(a) || isTranslationLine(a)
-            const bIsJa = isJapaneseLine(b) || isTranslationLine(b)
+            const translation = getTranslationText(line)
+            if (translation) {
+              elements.push(
+                <p className={styles.bodyTranslation} key={rawKey}>
+                  {parseInline(translation, rawKey)}
+                </p>,
+              )
+              continue
+            }
 
-            if (aIsJa !== bIsJa) {
-              const en = aIsJa ? b : a
-              const ja = aIsJa ? a : b
+            const nextLine = lines[i + 1]?.trim()
+            const nextTranslation = nextLine ? getTranslationText(nextLine) : null
 
+            if (nextTranslation) {
               elements.push(
                 <div className={styles.bodyLyricPair} key={rawKey}>
-                  <p className={styles.bodyLyricEn}>{en}</p>
-                  <p className={styles.bodyLyricJa}>{ja}</p>
+                  <p className={styles.bodyLyricEn}>{parseInline(line, `${rawKey}-en`)}</p>
+                  <p className={styles.bodyLyricJa}>{parseInline(nextTranslation, `${rawKey}-ja`)}</p>
                 </div>,
               )
               i += 1
               continue
             }
-          }
 
-          if (isTranslationLine(line) || isJapaneseLine(line)) {
-            elements.push(
-              <p className={styles.bodyTranslation} key={rawKey}>
-                {line}
-              </p>,
-            )
-            continue
-          }
-
-          if (isQuoteLine(line)) {
             elements.push(
               <p className={styles.bodyQuote} key={rawKey}>
-                {line}
+                {parseInline(line, rawKey)}
               </p>,
             )
             continue
@@ -157,7 +193,7 @@ export function SongBody({ body }: { body: string | null }) {
 
           elements.push(
             <p className={styles.bodyNote} key={rawKey}>
-              {line}
+              {parseInline(line, rawKey)}
             </p>,
           )
         }

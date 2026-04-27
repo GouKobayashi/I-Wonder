@@ -6,7 +6,6 @@ import { ExternalLinkButtons } from '@/components/ExternalLinkButtons'
 import { PageShell } from '@/components/PageShell'
 import { SongCard } from '@/components/SongCard'
 import {
-  getArtistDisplayLabel,
   getPublishedAlbumsByArtistId,
   getPublishedArtistBySlug,
   getPublishedSongsByAlbumId,
@@ -39,16 +38,6 @@ function buildArtistLinks(artistName: string) {
   ]
 }
 
-function getSongPreview(bodyExplanation: string | null) {
-  if (!bodyExplanation) {
-    return null
-  }
-
-  const [firstLine] = bodyExplanation.split('\n')
-  return firstLine.trim()
-}
-
-
 export default async function ArtistPage({ params }: { params: Promise<RouteParams> }) {
   const { artistSlug } = await params
 
@@ -71,7 +60,11 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
               { label: artist.name },
             ]}
           />
-          <h1 className={styles.heroTitle}>{getArtistDisplayLabel(artist)}</h1>
+          {artist.artist_image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className={styles.artistHeroImage} src={artist.artist_image_url} alt={artist.name} />
+          ) : null}
+          <h1 className={styles.heroTitle}>{artist.name}</h1>
         </div>
         <ExternalLinkButtons links={buildArtistLinks(artist.name)} />
       </section>
@@ -84,7 +77,7 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
 
           {albums.length > 0 ? (
             <div className={styles.cardGrid}>
-              {albums.map((album, index) => (
+              {albums.map((album) => (
                 <AlbumCard
                   key={album.id}
                   artistSlug={artist.slug}
@@ -117,10 +110,8 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
                     href={`/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`}
                     title={song.title}
                     albumTitle={album.title}
-                    artistName={artist.name}
                     trackNumber={song.track_number}
                     discNumber={song.disc_number}
-                    bodyPreview={getSongPreview(song.body_explanation)}
                   />
                 )
               })}

@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -6,8 +5,6 @@ import { ExternalLinkButtons } from '@/components/ExternalLinkButtons'
 import { PageShell } from '@/components/PageShell'
 import { SongCard } from '@/components/SongCard'
 import {
-  formatReleaseDate,
-  getArtistDisplayLabel,
   getPublishedAlbumBySlug,
   getPublishedArtistBySlug,
   getPublishedSongsByAlbumId,
@@ -40,30 +37,6 @@ function buildAlbumLinks(artistName: string, albumTitle: string) {
     },
   ]
 }
-
-function getSongPreview(bodyExplanation: string | null) {
-  if (!bodyExplanation) {
-    return null
-  }
-
-  const [firstLine] = bodyExplanation.split('\n')
-  return firstLine.trim()
-}
-
-function getSongReason(songTitle: string, bodyExplanation: string | null) {
-  const normalizedTitle = songTitle.toLowerCase()
-
-  if (normalizedTitle === 'king') {
-    return '自分を王として語る声が、誇示だけでなく孤独や信仰へにじむ曲として読めます。'
-  }
-
-  if (normalizedTitle === 'father') {
-    return '父性、祈り、赦しが重なる地点から、BULLY全体の温度をつかめます。'
-  }
-
-  return getSongPreview(bodyExplanation)
-}
-
 export default async function AlbumPage({ params }: { params: Promise<RouteParams> }) {
   const { artistSlug, albumSlug } = await params
 
@@ -109,12 +82,9 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
                   key={song.id}
                   href={`/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`}
                   title={song.title}
-                  albumTitle={album.title}
-                  artistName={artist.name}
                   trackNumber={song.track_number}
                   discNumber={song.disc_number}
                   showDisc={showDisc}
-                  bodyPreview={getSongReason(song.title, song.body_explanation)}
                 />
               ))}
             </div>
@@ -122,8 +92,6 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
             <div className={styles.emptyState}>公開済み曲はまだありません。</div>
           )}
         </section>
-
-
       </div>
     </PageShell>
   )

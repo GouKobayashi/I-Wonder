@@ -114,6 +114,16 @@ export function ArtistForm() {
       </div>
 
       <div className={styles.field}>
+        <label htmlFor="artist_image">artist_image</label>
+        <input id="artist_image" name="artist_image" type="file" accept="image/*" />
+        <div className={styles.fieldHint}>
+          <p>画像ファイルをそのままアップロードします。</p>
+          <p>保存先は Supabase Storage の `artist-images` バケットです。</p>
+        </div>
+        <FieldError state={state} name="artist_image" />
+      </div>
+
+      <div className={styles.field}>
         <label htmlFor="bio_short">bio_short</label>
         <textarea id="bio_short" name="bio_short" />
       </div>
@@ -179,8 +189,13 @@ export function AlbumForm({ artists }: { artists: ArtistOption[] }) {
       </div>
 
       <div className={styles.field}>
-        <label htmlFor="cover_image_url">cover_image_url</label>
-        <input id="cover_image_url" name="cover_image_url" type="url" />
+        <label htmlFor="cover_image">cover_image</label>
+        <input id="cover_image" name="cover_image" type="file" accept="image/*" />
+        <div className={styles.fieldHint}>
+          <p>ジャケット画像をそのままアップロードします。</p>
+          <p>保存先は Supabase Storage の `album-images` バケットです。</p>
+        </div>
+        <FieldError state={state} name="cover_image" />
       </div>
 
       <label className={styles.checkboxRow}>
