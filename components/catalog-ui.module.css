@@ -98,6 +98,14 @@
   gap: 25px;
 }
 
+.artistHeroImage {
+  width: min(100%, 420px);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  border-radius: 4px;
+}
+
 .heroTitle {
   font-size: 64px;
   font-weight: 800;
@@ -262,6 +270,15 @@
   line-height: 1.75;
 }
 
+.bodySectionHeading {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  margin: 20px 0 6px;
+}
+
 .bodyQuote {
   font-size: inherit;
   line-height: inherit;
@@ -273,19 +290,11 @@
 .bodyTranslation {
   color: var(--foreground);
   font-size: inherit;
+  font-style: italic;
 }
 
 .bodyNote {
   color: var(--foreground);
-}
-
-.bodyInlineSectionTitle {
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  margin: 18px 0 8px;
 }
 
 .bodyLyricPair {
@@ -293,10 +302,19 @@
   gap: 6px;
 }
 
+.bodyLyricLabel {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
 .bodyLyricEn,
 .bodyLyricJa {
   font-size: inherit;
   line-height: inherit;
+  margin: 0;
 }
 
 .bodyLyricEn {
@@ -306,27 +324,41 @@
 
 .bodyLyricJa {
   color: var(--foreground);
+  font-style: italic;
 }
 
-.bodyCallout {
-  border-left: none;
-  background: transparent;
-  padding: 0;
+.bodySupplement {
+  border-left: 2px solid var(--card-border);
+  background: #f7f7f7;
+  padding: 12px 14px;
   display: grid;
-  gap: 4px;
+  gap: 8px;
   margin: 10px 0;
 }
 
-.bodyCalloutBody {
+.bodySupplementLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bodySupplementBody {
   color: var(--foreground);
   font-size: inherit;
+  display: grid;
+  gap: 6px;
+}
+
+.bodySupplementBody p {
+  margin: 0;
 }
 
 .bodySubheading {
-  font-size: inherit;
+  font-size: 22px;
   font-weight: 700;
-  line-height: inherit;
-  letter-spacing: inherit;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
   margin-top: 10px;
 }
 

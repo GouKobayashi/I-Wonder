@@ -4,6 +4,7 @@ export type ArtistRecord = {
   id: string
   slug: string
   name: string
+  artist_image_url: string | null
   bio_short: string | null
   country: string | null
   published: boolean
@@ -34,10 +35,25 @@ export type SongRecord = {
 export async function getPublishedArtistBySlug(artistSlug: string) {
   const result = await supabase
     .from('artists')
-    .select('id, slug, name, bio_short, country, published')
+    .select('id, slug, name, artist_image_url, bio_short, country, published')
     .eq('slug', artistSlug)
     .eq('published', true)
     .maybeSingle<ArtistRecord>()
+
+  if (result.error) {
+    throw new Error(result.error.message)
+  }
+
+  return result.data
+}
+
+export async function getPublishedArtists() {
+  const result = await supabase
+    .from('artists')
+    .select('id, slug, name, artist_image_url, bio_short, country, published')
+    .eq('published', true)
+    .order('name', { ascending: true })
+    .returns<ArtistRecord[]>()
 
   if (result.error) {
     throw new Error(result.error.message)
@@ -133,9 +149,5 @@ export function formatTrackPosition(trackNumber: number | null, discNumber: numb
 }
 
 export function getArtistDisplayLabel(artist: Pick<ArtistRecord, 'slug' | 'name'>) {
-  if (artist.slug === 'ye') {
-    return 'Ye | Kanye west'
-  }
-
   return artist.name
 }

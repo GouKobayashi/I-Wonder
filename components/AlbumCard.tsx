@@ -1,7 +1,5 @@
 import Link from 'next/link'
 
-import { formatReleaseDate } from '@/lib/music-catalog'
-
 import styles from './catalog-ui.module.css'
 
 type AlbumCardProps = {
@@ -13,17 +11,9 @@ type AlbumCardProps = {
     release_date: string | null
     cover_image_url: string | null
   }
-  songCount?: number
-  description?: string
 }
 
-export function AlbumCard({
-  artistSlug,
-  artistName,
-  album,
-  songCount,
-  description,
-}: AlbumCardProps) {
+export function AlbumCard({ artistSlug, artistName, album }: AlbumCardProps) {
   const href = `/artists/${artistSlug}/albums/${album.slug}`
 
   return (

@@ -6,9 +6,6 @@ import { PageShell } from '@/components/PageShell'
 import { SongBody } from '@/components/SongBody'
 import { SongCard } from '@/components/SongCard'
 import {
-  formatReleaseDate,
-  formatTrackPosition,
-  getArtistDisplayLabel,
   getPublishedAlbumBySlug,
   getPublishedArtistBySlug,
   getPublishedSongBySlug,
@@ -106,7 +103,6 @@ export default async function SongDetailPage({
                 href={`/artists/${artist.slug}/albums/${album.slug}/songs/${albumSong.slug}`}
                 title={albumSong.title}
                 albumTitle={album.title}
-                artistName={artist.name}
                 trackNumber={albumSong.track_number}
                 discNumber={albumSong.disc_number}
                 showDisc={showDisc}

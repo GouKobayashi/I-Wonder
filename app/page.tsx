@@ -1,26 +1,39 @@
-import styles from "./page.module.css";
+import { ArtistCard } from '@/components/ArtistCard'
+import { PageShell } from '@/components/PageShell'
+import { getPublishedArtists } from '@/lib/music-catalog'
 
-export default function Home() {
+import styles from '@/components/catalog-ui.module.css'
+
+export const dynamic = 'force-dynamic'
+
+export default async function HomePage() {
+  const artists = await getPublishedArtists()
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <p className={styles.eyebrow}>I-Wonder</p>
-        <div className={styles.intro}>
-          <h1>問いから始まる、学びと挑戦のための場所。</h1>
-          <p>
-            まずは Next.js と Vercel で公開基盤を整えています。ここから
-            I-Wonder の内容を育てていく前提の最小構成です。
-          </p>
+    <PageShell>
+      <section className={styles.hero}>
+        <div className={styles.heroBody}>
+          <h1 className={styles.heroTitle}>I WONDER</h1>
         </div>
-        <div className={styles.ctas}>
-          <a className={styles.primary} href="https://github.com/GouKobayashi/I-Wonder">
-            GitHub
-          </a>
-          <a className={styles.secondary} href="https://vercel.com">
-            Vercel
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+      </section>
+
+      <div className={styles.contentGrid}>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Artists</h2>
+          </div>
+
+          {artists.length > 0 ? (
+            <div className={styles.cardGrid}>
+              {artists.map((artist) => (
+                <ArtistCard key={artist.id} artist={artist} />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>公開済みのアーティストはまだありません。</div>
+          )}
+        </section>
+      </div>
+    </PageShell>
+  )
 }

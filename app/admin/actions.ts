@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { randomUUID } from 'node:crypto'
 
 import {
   clearAdminSession,
@@ -43,6 +44,25 @@ function getOptionalIntegerValue(formData: FormData, key: string) {
   return { value: parsed }
 }
 
+function getOptionalFileValue(formData: FormData, key: string) {
+  const value = formData.get(key)
+
+  if (!(value instanceof File) || value.size === 0) {
+    return { value: null as File | null }
+  }
+
+  if (!value.type.startsWith('image/')) {
+    return { error: '画像ファイルを選択してください。' }
+  }
+
+  const maxSizeInBytes = 10 * 1024 * 1024
+  if (value.size > maxSizeInBytes) {
+    return { error: '画像サイズは 10MB 以下にしてください。' }
+  }
+
+  return { value }
+}
+
 function getOptionalDateValue(formData: FormData, key: string) {
   const value = getStringValue(formData, key)
 
@@ -79,6 +99,62 @@ function getConfigurationState(): FormState {
 
 function normalizeSupabaseErrorMessage(message: string) {
   return message || 'Supabase でエラーが発生しました。'
+}
+
+function getArtistImageBucketName() {
+  return process.env.SUPABASE_ARTIST_IMAGE_BUCKET || 'artist-images'
+}
+
+function getAlbumImageBucketName() {
+  return process.env.SUPABASE_ALBUM_IMAGE_BUCKET || 'album-images'
+}
+
+async function uploadArtistImage(file: File, artistSlug: string) {
+  const supabase = getSupabaseAdmin()
+  const bucket = getArtistImageBucketName()
+  const fileExtension = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() : null
+  const safeExtension = fileExtension && /^[a-z0-9]+$/.test(fileExtension) ? fileExtension : 'bin'
+  const filePath = `${artistSlug}/${randomUUID()}.${safeExtension}`
+  const fileBuffer = Buffer.from(await file.arrayBuffer())
+
+  const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, fileBuffer, {
+    contentType: file.type,
+    upsert: false,
+  })
+
+  if (uploadError) {
+    return { error: normalizeSupabaseErrorMessage(uploadError.message) }
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(bucket).getPublicUrl(filePath)
+
+  return { publicUrl }
+}
+
+async function uploadAlbumImage(file: File, artistSlug: string, albumSlug: string) {
+  const supabase = getSupabaseAdmin()
+  const bucket = getAlbumImageBucketName()
+  const fileExtension = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() : null
+  const safeExtension = fileExtension && /^[a-z0-9]+$/.test(fileExtension) ? fileExtension : 'bin'
+  const filePath = `${artistSlug}/${albumSlug}/${randomUUID()}.${safeExtension}`
+  const fileBuffer = Buffer.from(await file.arrayBuffer())
+
+  const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, fileBuffer, {
+    contentType: file.type,
+    upsert: false,
+  })
+
+  if (uploadError) {
+    return { error: normalizeSupabaseErrorMessage(uploadError.message) }
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(bucket).getPublicUrl(filePath)
+
+  return { publicUrl }
 }
 
 export async function loginAdmin(
@@ -126,6 +202,7 @@ export async function createArtist(
 
   const slug = getStringValue(formData, 'slug')
   const name = getStringValue(formData, 'name')
+  const artistImage = getOptionalFileValue(formData, 'artist_image')
   const bioShort = getOptionalStringValue(formData, 'bio_short')
   const country = getOptionalStringValue(formData, 'country')
   const published = getBooleanValue(formData, 'published')
@@ -140,11 +217,28 @@ export async function createArtist(
     fieldErrors.name = 'name は必須です。'
   }
 
+  if (artistImage.error) {
+    fieldErrors.artist_image = artistImage.error
+  }
+
   if (Object.keys(fieldErrors).length > 0) {
     return {
       status: 'error',
       fieldErrors,
     }
+  }
+
+  let artistImageUrl: string | null = null
+
+  if (artistImage.value) {
+    const uploadResult = await uploadArtistImage(artistImage.value, slug)
+    if ('error' in uploadResult) {
+      return {
+        status: 'error',
+        message: uploadResult.error,
+      }
+    }
+    artistImageUrl = uploadResult.publicUrl
   }
 
   const supabase = getSupabaseAdmin()
@@ -153,6 +247,7 @@ export async function createArtist(
     .insert({
       slug,
       name,
+      artist_image_url: artistImageUrl,
       bio_short: bioShort,
       country,
       published,
@@ -189,7 +284,7 @@ export async function createAlbum(
   const slug = getStringValue(formData, 'slug')
   const title = getStringValue(formData, 'title')
   const releaseDate = getOptionalDateValue(formData, 'release_date')
-  const coverImageUrl = getOptionalStringValue(formData, 'cover_image_url')
+  const coverImage = getOptionalFileValue(formData, 'cover_image')
   const published = getBooleanValue(formData, 'published')
 
   const fieldErrors: Record<string, string> = {}
@@ -210,11 +305,51 @@ export async function createAlbum(
     fieldErrors.release_date = releaseDate.error
   }
 
+  if (coverImage.error) {
+    fieldErrors.cover_image = coverImage.error
+  }
+
   if (Object.keys(fieldErrors).length > 0) {
     return {
       status: 'error',
       fieldErrors,
     }
+  }
+
+  let coverImageUrl: string | null = null
+
+  if (coverImage.value) {
+    const supabase = getSupabaseAdmin()
+    const { data: artist, error: artistError } = await supabase
+      .from('artists')
+      .select('slug')
+      .eq('id', primaryArtistId)
+      .maybeSingle<{ slug: string }>()
+
+    if (artistError) {
+      return {
+        status: 'error',
+        message: normalizeSupabaseErrorMessage(artistError.message),
+      }
+    }
+
+    if (!artist) {
+      return {
+        status: 'error',
+        fieldErrors: {
+          primary_artist_id: 'artist を選択してください。',
+        },
+      }
+    }
+
+    const uploadResult = await uploadAlbumImage(coverImage.value, artist.slug, slug)
+    if ('error' in uploadResult) {
+      return {
+        status: 'error',
+        message: uploadResult.error,
+      }
+    }
+    coverImageUrl = uploadResult.publicUrl
   }
 
   const supabase = getSupabaseAdmin()
