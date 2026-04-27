@@ -66,7 +66,7 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
               ]}
             />
             <div className={`${styles.heroCopy} ${styles.artistHeroCopy}`}>
-              <p className={styles.heroKicker}>{artist.name}</p>
+              <p className={styles.albumHeroArtistName}>{artist.name}</p>
               <h1 className={`${styles.heroTitle} ${styles.artistHeroTitle}`}>{album.title}</h1>
             </div>
           </div>
