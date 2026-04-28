@@ -10,6 +10,14 @@ export function Header() {
           IW
         </Link>
       </div>
+      <nav className={styles.headerNav} aria-label="Primary">
+        <Link className={styles.headerLink} href="/artists">
+          Artists
+        </Link>
+        <Link className={styles.headerLink} href="/albums">
+          Albums
+        </Link>
+      </nav>
     </header>
   )
 }
