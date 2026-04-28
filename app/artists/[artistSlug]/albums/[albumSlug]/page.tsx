@@ -5,6 +5,7 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { ExternalLinkButtons } from '@/components/ExternalLinkButtons'
 import { PageShell } from '@/components/PageShell'
 import { SongCard } from '@/components/SongCard'
+import { XShareButton } from '@/components/XShareButton'
 import {
   getPublishedAlbumBySlug,
   getPublishedArtistBySlug,
@@ -121,6 +122,11 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
           </div>
         </div>
         <ExternalLinkButtons links={buildAlbumLinks(artist.name, album.title)} />
+        <XShareButton
+          title={album.title}
+          urlPath={`/artists/${artist.slug}/albums/${album.slug}`}
+          summary={`${artist.name} on I Wonder`}
+        />
       </section>
 
       <div className={styles.contentGrid}>

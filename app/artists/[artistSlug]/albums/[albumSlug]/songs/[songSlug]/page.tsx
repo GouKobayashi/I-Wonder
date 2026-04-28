@@ -6,6 +6,7 @@ import { ExternalLinkButtons } from '@/components/ExternalLinkButtons'
 import { PageShell } from '@/components/PageShell'
 import { SongBody } from '@/components/SongBody'
 import { SongCard } from '@/components/SongCard'
+import { XShareButton } from '@/components/XShareButton'
 import {
   getPublishedAlbumBySlug,
   getPublishedArtistBySlug,
@@ -138,6 +139,11 @@ export default async function SongDetailPage({
           <h1 className={styles.heroTitle}>{song.title}</h1>
         </div>
         <ExternalLinkButtons links={buildSongLinks(artist.name, album.title, song.title)} />
+        <XShareButton
+          title={song.title}
+          urlPath={`/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`}
+          summary={`${artist.name} / ${album.title} on I Wonder`}
+        />
       </section>
 
       <div className={styles.contentGrid}>

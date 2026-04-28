@@ -10,6 +10,13 @@ export function PageShell({ children }: { children: ReactNode }) {
         <div className={styles.stack}>
           <Header />
           {children}
+          <footer className={styles.pageFooter}>
+            <div className={styles.pageFooterBrand}>I Wonder</div>
+            <div className={styles.pageFooterMeta}>
+              <div>Music database for lyrics, background, and context.</div>
+              <div>Explore with care.</div>
+            </div>
+          </footer>
         </div>
       </div>
     </main>
