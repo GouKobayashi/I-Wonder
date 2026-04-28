@@ -109,6 +109,12 @@ function getAlbumImageBucketName() {
   return process.env.SUPABASE_ALBUM_IMAGE_BUCKET || 'album-images'
 }
 
+function revalidatePublicCatalogBasePaths() {
+  revalidatePath('/')
+  revalidatePath('/artists')
+  revalidatePath('/albums')
+}
+
 async function uploadArtistImage(file: File, artistSlug: string) {
   const supabase = getSupabaseAdmin()
   const bucket = getArtistImageBucketName()
@@ -264,6 +270,7 @@ export async function createArtist(
 
   revalidatePath('/admin/albums/new')
   revalidatePath('/debug/supabase')
+  revalidatePublicCatalogBasePaths()
 
   return {
     status: 'success',
@@ -316,33 +323,33 @@ export async function createAlbum(
     }
   }
 
+  const supabase = getSupabaseAdmin()
+  const { data: artistRecord, error: artistLookupError } = await supabase
+    .from('artists')
+    .select('slug')
+    .eq('id', primaryArtistId)
+    .maybeSingle<{ slug: string }>()
+
+  if (artistLookupError) {
+    return {
+      status: 'error',
+      message: normalizeSupabaseErrorMessage(artistLookupError.message),
+    }
+  }
+
+  if (!artistRecord) {
+    return {
+      status: 'error',
+      fieldErrors: {
+        primary_artist_id: 'artist を選択してください。',
+      },
+    }
+  }
+
   let coverImageUrl: string | null = null
 
   if (coverImage.value) {
-    const supabase = getSupabaseAdmin()
-    const { data: artist, error: artistError } = await supabase
-      .from('artists')
-      .select('slug')
-      .eq('id', primaryArtistId)
-      .maybeSingle<{ slug: string }>()
-
-    if (artistError) {
-      return {
-        status: 'error',
-        message: normalizeSupabaseErrorMessage(artistError.message),
-      }
-    }
-
-    if (!artist) {
-      return {
-        status: 'error',
-        fieldErrors: {
-          primary_artist_id: 'artist を選択してください。',
-        },
-      }
-    }
-
-    const uploadResult = await uploadAlbumImage(coverImage.value, artist.slug, slug)
+    const uploadResult = await uploadAlbumImage(coverImage.value, artistRecord.slug, slug)
     if ('error' in uploadResult) {
       return {
         status: 'error',
@@ -352,7 +359,6 @@ export async function createAlbum(
     coverImageUrl = uploadResult.publicUrl
   }
 
-  const supabase = getSupabaseAdmin()
   const { data, error } = await supabase
     .from('albums')
     .insert({
@@ -375,6 +381,9 @@ export async function createAlbum(
 
   revalidatePath('/admin/songs/new')
   revalidatePath('/debug/supabase')
+  revalidatePublicCatalogBasePaths()
+  revalidatePath(`/artists/${artistRecord.slug}`)
+  revalidatePath(`/artists/${artistRecord.slug}/albums/${slug}`)
 
   return {
     status: 'success',
@@ -435,33 +444,29 @@ export async function createSong(
   }
 
   const supabase = getSupabaseAdmin()
-  let resolvedReleaseDate = releaseDate.value
+  const { data: albumContext, error: albumContextError } = await supabase
+    .from('albums')
+    .select('slug, release_date, primary_artist_id')
+    .eq('id', primaryAlbumId)
+    .maybeSingle<{ slug: string; release_date: string | null; primary_artist_id: string }>()
 
-  if (!resolvedReleaseDate) {
-    const { data: album, error: albumError } = await supabase
-      .from('albums')
-      .select('release_date')
-      .eq('id', primaryAlbumId)
-      .maybeSingle<{ release_date: string | null }>()
-
-    if (albumError) {
-      return {
-        status: 'error',
-        message: normalizeSupabaseErrorMessage(albumError.message),
-      }
+  if (albumContextError) {
+    return {
+      status: 'error',
+      message: normalizeSupabaseErrorMessage(albumContextError.message),
     }
-
-    if (!album) {
-      return {
-        status: 'error',
-        fieldErrors: {
-          primary_album_id: 'album を選択してください。',
-        },
-      }
-    }
-
-    resolvedReleaseDate = album.release_date
   }
+
+  if (!albumContext) {
+    return {
+      status: 'error',
+      fieldErrors: {
+        primary_album_id: 'album を選択してください。',
+      },
+    }
+  }
+
+  const resolvedReleaseDate = releaseDate.value ?? albumContext.release_date
 
   const { data, error } = await supabase
     .from('songs')
@@ -487,6 +492,19 @@ export async function createSong(
   }
 
   revalidatePath('/debug/supabase')
+  revalidatePublicCatalogBasePaths()
+
+  const { data: artistRecord, error: artistLookupError } = await supabase
+    .from('artists')
+    .select('slug')
+    .eq('id', albumContext.primary_artist_id)
+    .maybeSingle<{ slug: string }>()
+
+  if (!artistLookupError && artistRecord) {
+    revalidatePath(`/artists/${artistRecord.slug}`)
+    revalidatePath(`/artists/${artistRecord.slug}/albums/${albumContext.slug}`)
+    revalidatePath(`/artists/${artistRecord.slug}/albums/${albumContext.slug}/songs/${slug}`)
+  }
 
   return {
     status: 'success',

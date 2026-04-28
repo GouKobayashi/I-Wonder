@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -113,20 +114,24 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
           <div className={`${styles.heroMediaColumn} ${styles.artistHeroMediaColumn}`}>
             <div className={styles.albumHeroFrame}>
               {album.cover_image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img className={styles.albumHeroImage} src={album.cover_image_url} alt={album.title} />
+                <Image
+                  className={styles.albumHeroImage}
+                  src={album.cover_image_url}
+                  alt={album.title}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                />
               ) : (
                 <div className={styles.heroImageFallback}>{album.title}</div>
               )}
             </div>
           </div>
         </div>
-        <ExternalLinkButtons links={buildAlbumLinks(artist.name, album.title)} />
-        <XShareButton
-          title={album.title}
-          urlPath={`/artists/${artist.slug}/albums/${album.slug}`}
-          summary={`${artist.name} on I Wonder`}
-        />
+        <div className={styles.actions}>
+          <ExternalLinkButtons links={buildAlbumLinks(artist.name, album.title)} />
+          <XShareButton title={album.title} urlPath={`/artists/${artist.slug}/albums/${album.slug}`} />
+        </div>
       </section>
 
       <div className={styles.contentGrid}>

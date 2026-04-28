@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 import styles from './catalog-ui.module.css'
@@ -20,8 +21,13 @@ export function AlbumCard({ artistSlug, artistName, album }: AlbumCardProps) {
     <Link className={styles.albumCard} href={href}>
       <div className={styles.albumCover}>
         {album.cover_image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img className={styles.albumCoverImage} src={album.cover_image_url} alt={album.title} />
+          <Image
+            className={styles.albumCoverImage}
+            src={album.cover_image_url}
+            alt={album.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1400px) 33vw, 280px"
+          />
         ) : (
           <div className={styles.albumCoverFallback}>{album.title}</div>
         )}

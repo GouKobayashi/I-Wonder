@@ -138,12 +138,13 @@ export default async function SongDetailPage({
           />
           <h1 className={styles.heroTitle}>{song.title}</h1>
         </div>
-        <ExternalLinkButtons links={buildSongLinks(artist.name, album.title, song.title)} />
-        <XShareButton
-          title={song.title}
-          urlPath={`/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`}
-          summary={`${artist.name} / ${album.title} on I Wonder`}
-        />
+        <div className={styles.actions}>
+          <ExternalLinkButtons links={buildSongLinks(artist.name, album.title, song.title)} />
+          <XShareButton
+            title={song.title}
+            urlPath={`/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`}
+          />
+        </div>
       </section>
 
       <div className={styles.contentGrid}>

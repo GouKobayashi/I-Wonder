@@ -7,6 +7,8 @@ import {
 } from '@/lib/music-catalog'
 import { getSiteUrl } from '@/lib/site'
 
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl()
   const artists = await getPublishedArtists()
@@ -46,6 +48,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: siteUrl,
       changeFrequency: 'daily',
       priority: 1,
+    },
+    {
+      url: `${siteUrl}/artists`,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/albums`,
+      changeFrequency: 'daily',
+      priority: 0.9,
     },
     ...artistEntries,
     ...albumEntries,

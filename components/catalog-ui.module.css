@@ -33,6 +33,13 @@
   min-width: 0;
 }
 
+.headerNav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .headerTitle {
   font-size: 20px;
   font-weight: 700;
@@ -62,19 +69,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 30px;
-  padding: 0 10px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  transition: border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  color: #ffffff;
+  background: #000000;
+  transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
 }
 
 .xShareButton:hover {
-  border-color: rgba(0, 0, 0, 0.32);
-  color: var(--foreground);
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.xShareButtonIcon {
+  width: 16px;
+  height: 16px;
+  flex: none;
 }
 
 .pageFooter {
@@ -289,11 +302,11 @@
 }
 
 .artistHeroTitle {
-  max-width: 7ch;
+  max-width: 12ch;
   font-size: clamp(54px, 7.2vw, 88px);
   line-height: 0.9;
   letter-spacing: -0.07em;
-  text-wrap: balance;
+  text-wrap: pretty;
 }
 
 .actions {
@@ -393,6 +406,8 @@
 }
 
 .albumCover {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   aspect-ratio: 1 / 1;
   background: #f0f0f0;
@@ -402,6 +417,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .albumCoverFallback {
@@ -558,6 +574,15 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .headerNav {
+    justify-content: flex-start;
+  }
+
   .heroFeature {
     grid-template-columns: 1fr;
     gap: 24px;

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 
 import { AlbumCard } from '@/components/AlbumCard'
@@ -103,11 +104,13 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
           <div className={`${styles.heroMediaColumn} ${styles.artistHeroMediaColumn}`}>
             <div className={styles.artistHeroFrame}>
               {artist.artist_image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   className={styles.artistHeroImage}
                   src={artist.artist_image_url}
                   alt={artist.name}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 40vw"
                 />
               ) : (
                 <div className={styles.heroImageFallback}>{artist.name.slice(0, 1)}</div>
@@ -115,12 +118,10 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
             </div>
           </div>
         </div>
-        <ExternalLinkButtons links={buildArtistLinks(artist.name)} />
-        <XShareButton
-          title={artist.name}
-          urlPath={`/artists/${artist.slug}`}
-          summary={artist.bio_short ?? 'Artist page on I Wonder'}
-        />
+        <div className={styles.actions}>
+          <ExternalLinkButtons links={buildArtistLinks(artist.name)} />
+          <XShareButton title={artist.name} urlPath={`/artists/${artist.slug}`} />
+        </div>
       </section>
 
       <div className={styles.contentGrid}>
