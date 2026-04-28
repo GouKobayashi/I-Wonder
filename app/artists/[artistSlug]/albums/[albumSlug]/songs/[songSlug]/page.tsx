@@ -166,7 +166,6 @@ export default async function SongDetailPage({
                 key={albumSong.id}
                 href={`/artists/${artist.slug}/albums/${album.slug}/songs/${albumSong.slug}`}
                 title={albumSong.title}
-                albumTitle={album.title}
                 trackNumber={albumSong.track_number}
                 discNumber={albumSong.disc_number}
                 showDisc={showDisc}

@@ -11,3 +11,19 @@ export function getSiteUrl() {
 
   return 'http://localhost:3000'
 }
+
+export function getCanonicalSiteUrl() {
+  const explicitSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  if (explicitSiteUrl) {
+    return explicitSiteUrl
+  }
+
+  const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (productionUrl) {
+    return productionUrl.startsWith('http')
+      ? productionUrl
+      : `https://${productionUrl}`
+  }
+
+  return getSiteUrl()
+}

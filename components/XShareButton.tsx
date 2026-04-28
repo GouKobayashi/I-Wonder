@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { getSiteUrl } from '@/lib/site'
+import { getCanonicalSiteUrl } from '@/lib/site'
 
 import styles from './catalog-ui.module.css'
 
@@ -27,7 +27,7 @@ function XLogo() {
 
 export function XShareButton({ title, urlPath }: XShareButtonProps) {
   const shareUrl = new URL('https://x.com/intent/post')
-  const pageUrl = `${getSiteUrl()}${urlPath}`
+  const pageUrl = `${getCanonicalSiteUrl()}${urlPath}`
 
   shareUrl.searchParams.set('url', pageUrl)
   shareUrl.searchParams.set('text', '@iwonder_jp')
