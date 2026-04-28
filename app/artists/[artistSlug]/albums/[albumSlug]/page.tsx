@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { ExternalLinkButtons } from '@/components/ExternalLinkButtons'
@@ -18,6 +19,43 @@ type RouteParams = {
 }
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<RouteParams>
+}): Promise<Metadata> {
+  const { artistSlug, albumSlug } = await params
+
+  const artist = await getPublishedArtistBySlug(artistSlug)
+  if (!artist) {
+    return {
+      title: 'Not Found',
+    }
+  }
+
+  const album = await getPublishedAlbumBySlug(albumSlug, artist.id)
+  if (!album) {
+    return {
+      title: 'Not Found',
+    }
+  }
+
+  const description = `${album.title} by ${artist.name} on I Wonder.`
+
+  return {
+    title: `${album.title} by ${artist.name}`,
+    description,
+    alternates: {
+      canonical: `/artists/${artist.slug}/albums/${album.slug}`,
+    },
+    openGraph: {
+      title: `${album.title} by ${artist.name}`,
+      description,
+      type: 'website',
+    },
+  }
+}
 
 function buildAlbumLinks(artistName: string, albumTitle: string) {
   const query = encodeURIComponent(`${artistName} ${albumTitle}`)

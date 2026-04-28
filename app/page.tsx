@@ -1,10 +1,15 @@
 import { ArtistCard } from '@/components/ArtistCard'
 import { PageShell } from '@/components/PageShell'
 import { getPublishedArtists } from '@/lib/music-catalog'
+import type { Metadata } from 'next'
 
 import styles from '@/components/catalog-ui.module.css'
 
 export const dynamic = 'force-dynamic'
+export const metadata: Metadata = {
+  description:
+    'I Wonder is a music database for reading foreign music through lyrics, background, and context.',
+}
 
 export default async function HomePage() {
   const artists = await getPublishedArtists()

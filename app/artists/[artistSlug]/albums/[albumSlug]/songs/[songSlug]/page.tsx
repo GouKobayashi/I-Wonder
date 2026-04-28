@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { ExternalLinkButtons } from '@/components/ExternalLinkButtons'
@@ -21,6 +22,62 @@ type RouteParams = {
 }
 
 export const dynamic = 'force-dynamic'
+
+function getSongDescription(body: string | null, artistName: string, albumTitle: string, songTitle: string) {
+  const lines = body
+    ?.split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  const fallback = `${songTitle} by ${artistName} on ${albumTitle}.`
+  const candidate = lines?.find((line) => !line.startsWith('#') && !line.startsWith('>')) ?? fallback
+
+  return candidate.replace(/\*\*/g, '').replace(/\*/g, '').replace(/`/g, '').slice(0, 160)
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<RouteParams>
+}): Promise<Metadata> {
+  const { artistSlug, albumSlug, songSlug } = await params
+
+  const artist = await getPublishedArtistBySlug(artistSlug)
+  if (!artist) {
+    return {
+      title: 'Not Found',
+    }
+  }
+
+  const album = await getPublishedAlbumBySlug(albumSlug, artist.id)
+  if (!album) {
+    return {
+      title: 'Not Found',
+    }
+  }
+
+  const song = await getPublishedSongBySlug(songSlug, album.id)
+  if (!song) {
+    return {
+      title: 'Not Found',
+    }
+  }
+
+  const description = getSongDescription(song.body_explanation, artist.name, album.title, song.title)
+
+  return {
+    title: `${song.title} by ${artist.name}`,
+    description,
+    alternates: {
+      canonical: `/artists/${artist.slug}/albums/${album.slug}/songs/${song.slug}`,
+    },
+    openGraph: {
+      title: `${song.title} by ${artist.name}`,
+      description,
+      type: 'website',
+    },
+  }
+}
 
 function buildSongLinks(artistName: string, albumTitle: string, songTitle: string) {
   const query = encodeURIComponent(`${artistName} ${albumTitle} ${songTitle}`)

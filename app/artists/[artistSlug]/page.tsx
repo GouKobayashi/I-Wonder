@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
 import { AlbumCard } from '@/components/AlbumCard'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -18,6 +19,38 @@ type RouteParams = {
 }
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<RouteParams>
+}): Promise<Metadata> {
+  const { artistSlug } = await params
+  const artist = await getPublishedArtistBySlug(artistSlug)
+
+  if (!artist) {
+    return {
+      title: 'Not Found',
+    }
+  }
+
+  const description =
+    artist.bio_short ??
+    `Artist page for ${artist.name} on I Wonder, a music database for lyrics, background, and context.`
+
+  return {
+    title: artist.name,
+    description,
+    alternates: {
+      canonical: `/artists/${artist.slug}`,
+    },
+    openGraph: {
+      title: artist.name,
+      description,
+      type: 'website',
+    },
+  }
+}
 
 function buildArtistLinks(artistName: string) {
   const query = encodeURIComponent(artistName)
