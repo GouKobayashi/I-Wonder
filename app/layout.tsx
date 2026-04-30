@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
+import Script from 'next/script';
 import "./globals.css";
 import { getSiteUrl } from "@/lib/site";
 import { SITE_DESCRIPTION } from "@/lib/metadata";
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? process.env.NEXT_PUBLIC_GA_ID
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -34,7 +39,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className="dark">
-      <body>{children}</body>
+      <body>
+        {GA_MEASUREMENT_ID ? (
+          <>
+            <Script
+              id="google-analytics-init"
+              strategy="beforeInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${GA_MEASUREMENT_ID}', {
+                    send_page_view: false
+                  });
+                `,
+              }}
+            />
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />
+          </>
+        ) : null}
+        {children}
+      </body>
     </html>
   );
 }
