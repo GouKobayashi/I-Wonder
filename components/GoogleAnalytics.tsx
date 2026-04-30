@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 type GoogleAnalyticsProps = {
   measurementId: string
@@ -17,15 +17,13 @@ declare global {
 
 export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const search = searchParams.toString()
 
   useEffect(() => {
     if (!pathname || !window.gtag) {
       return
     }
 
-    const pagePath = search ? `${pathname}?${search}` : pathname
+    const pagePath = `${window.location.pathname}${window.location.search}`
 
     window.gtag('event', 'page_view', {
       page_location: window.location.href,
@@ -33,7 +31,7 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
       page_title: document.title,
       send_to: measurementId,
     })
-  }, [measurementId, pathname, search])
+  }, [measurementId, pathname])
 
   return null
 }
