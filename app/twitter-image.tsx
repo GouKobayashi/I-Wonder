@@ -5,6 +5,7 @@ export const size = {
   height: 630,
 }
 
+export const alt = 'I Wonder'
 export const contentType = 'image/png'
 export const runtime = 'edge'
 
