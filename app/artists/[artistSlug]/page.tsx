@@ -104,7 +104,6 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
               ]}
             />
             <div className={`${styles.heroCopy} ${styles.artistHeroCopy}`}>
-              <p className={styles.heroKicker}>アーティスト</p>
               <h1 className={`${styles.heroTitle} ${styles.artistHeroTitle}`}>{artist.name}</h1>
             </div>
           </div>

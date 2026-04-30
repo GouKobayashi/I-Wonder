@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { ExternalLinkButtons } from '@/components/ExternalLinkButtons'
 import { PageShell } from '@/components/PageShell'
+import { SongBody } from '@/components/SongBody'
 import { SongCard } from '@/components/SongCard'
 import { XShareButton } from '@/components/XShareButton'
 import {
@@ -45,9 +46,7 @@ export async function generateMetadata({
     }
   }
 
-  const description =
-    album.album_descriptionm ??
-    `『${album.title}』は${artist.name}のアルバムです。I Wonderで歌詞・背景・文脈から読み解きます。`
+  const description = album.album_description ?? undefined
 
   return {
     title: `${album.title} by ${artist.name}`,
@@ -104,9 +103,6 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
   const songs = await getPublishedSongsByAlbumId(album.id)
   const showDisc = songs.some((song) => (song.disc_number ?? 1) > 1)
   const releaseDateLabel = formatJapaneseReleaseDate(album.release_date)
-  const albumDescription =
-    album.album_descriptionm ??
-    `『${album.title}』は${artist.name}のアルバムです。I Wonderで歌詞・背景・文脈から読み解きます。`
 
   return (
     <PageShell>
@@ -155,15 +151,11 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
       </section>
 
       <div className={styles.contentGrid}>
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>アルバム解説</h2>
-          </div>
-
-          <div className={styles.bodyCard}>
-            <p className={styles.bodyNote}>{albumDescription}</p>
-          </div>
-        </section>
+        {album.album_description ? (
+          <section className={styles.section}>
+            <SongBody body={album.album_description} />
+          </section>
+        ) : null}
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>

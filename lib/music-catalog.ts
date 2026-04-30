@@ -18,7 +18,7 @@ export type AlbumRecord = {
   slug: string
   title: string
   release_date: string | null
-  album_descriptionm: string | null
+  album_description: string | null
   cover_image_url: string | null
   primary_artist_id: string
   published: boolean
@@ -71,7 +71,7 @@ async function fetchPublishedArtists() {
 async function fetchPublishedAlbumBySlug(albumSlug: string, artistId: string) {
   const result = await supabase
     .from('albums')
-    .select('id, slug, title, release_date, album_descriptionm, cover_image_url, primary_artist_id, published')
+    .select('id, slug, title, release_date, album_description, cover_image_url, primary_artist_id, published')
     .eq('slug', albumSlug)
     .eq('primary_artist_id', artistId)
     .eq('published', true)
@@ -87,7 +87,7 @@ async function fetchPublishedAlbumBySlug(albumSlug: string, artistId: string) {
 async function fetchPublishedAlbumsByArtistId(artistId: string) {
   const result = await supabase
     .from('albums')
-    .select('id, slug, title, release_date, album_descriptionm, cover_image_url, primary_artist_id, published')
+    .select('id, slug, title, release_date, album_description, cover_image_url, primary_artist_id, published')
     .eq('primary_artist_id', artistId)
     .eq('published', true)
     .order('release_date', { ascending: false, nullsFirst: false })
@@ -104,7 +104,7 @@ async function fetchPublishedAlbumsByArtistId(artistId: string) {
 async function fetchPublishedAlbums() {
   const result = await supabase
     .from('albums')
-    .select('id, slug, title, release_date, album_descriptionm, cover_image_url, primary_artist_id, published')
+    .select('id, slug, title, release_date, album_description, cover_image_url, primary_artist_id, published')
     .eq('published', true)
     .order('release_date', { ascending: false, nullsFirst: false })
     .order('title', { ascending: true })

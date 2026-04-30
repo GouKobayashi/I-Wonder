@@ -192,8 +192,8 @@ export function AlbumForm({ artists }: { artists: ArtistOption[] }) {
       </div>
 
       <div className={styles.field}>
-        <label htmlFor="album_descriptionm">album_descriptionm</label>
-        <textarea id="album_descriptionm" name="album_descriptionm" />
+        <label htmlFor="album_description">album_description</label>
+        <textarea id="album_description" name="album_description" />
         <div className={styles.fieldHint}>
           <p>楽曲セクションの上に出す短い解説文です。</p>
           <p>2〜3文くらいを目安にしてください。</p>
