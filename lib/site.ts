@@ -1,12 +1,14 @@
+const PRODUCTION_SITE_URL = 'https://i-wonder.jp'
+
 export function getSiteUrl() {
   const explicitSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
   if (explicitSiteUrl) {
     return explicitSiteUrl
   }
 
-  const vercelUrl = process.env.VERCEL_URL
-  if (vercelUrl) {
-    return vercelUrl.startsWith('http') ? vercelUrl : `https://${vercelUrl}`
+  const vercelEnv = process.env.VERCEL_ENV
+  if (vercelEnv) {
+    return PRODUCTION_SITE_URL
   }
 
   return 'http://localhost:3000'
@@ -18,11 +20,9 @@ export function getCanonicalSiteUrl() {
     return explicitSiteUrl
   }
 
-  const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  if (productionUrl) {
-    return productionUrl.startsWith('http')
-      ? productionUrl
-      : `https://${productionUrl}`
+  const vercelEnv = process.env.VERCEL_ENV
+  if (vercelEnv) {
+    return PRODUCTION_SITE_URL
   }
 
   return getSiteUrl()
