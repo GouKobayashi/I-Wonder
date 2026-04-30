@@ -186,9 +186,18 @@ export function AlbumForm({ artists }: { artists: ArtistOption[] }) {
         <label htmlFor="release_date">release_date</label>
         <input id="release_date" name="release_date" type="date" />
         <div className={styles.fieldHint}>
-          <p>未入力の場合は album の release_date を使います。</p>
+          <p>年・月・日を入れるとページ上で日本語形式で表示されます。</p>
         </div>
         <FieldError state={state} name="release_date" />
+      </div>
+
+      <div className={styles.field}>
+        <label htmlFor="album_descriptionm">album_descriptionm</label>
+        <textarea id="album_descriptionm" name="album_descriptionm" />
+        <div className={styles.fieldHint}>
+          <p>楽曲セクションの上に出す短い解説文です。</p>
+          <p>2〜3文くらいを目安にしてください。</p>
+        </div>
       </div>
 
       <div className={styles.field}>

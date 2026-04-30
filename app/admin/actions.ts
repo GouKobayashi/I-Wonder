@@ -291,6 +291,7 @@ export async function createAlbum(
   const slug = getStringValue(formData, 'slug')
   const title = getStringValue(formData, 'title')
   const releaseDate = getOptionalDateValue(formData, 'release_date')
+  const albumDescriptionm = getOptionalStringValue(formData, 'album_descriptionm')
   const coverImage = getOptionalFileValue(formData, 'cover_image')
   const published = getBooleanValue(formData, 'published')
 
@@ -366,6 +367,7 @@ export async function createAlbum(
       slug,
       title,
       release_date: releaseDate.value,
+      album_descriptionm: albumDescriptionm,
       cover_image_url: coverImageUrl,
       published,
     })

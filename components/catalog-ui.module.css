@@ -227,6 +227,18 @@
   letter-spacing: -0.03em;
 }
 
+.albumHeroMeta {
+  display: grid;
+  gap: 6px;
+}
+
+.albumHeroReleaseDate {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
 .heroKicker {
   font-size: 12px;
   font-weight: 700;
@@ -494,6 +506,7 @@
 
 .bodyNote {
   color: var(--foreground);
+  margin: 0;
 }
 
 .bodyLyricPair {

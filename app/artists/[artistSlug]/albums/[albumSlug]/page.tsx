@@ -11,6 +11,7 @@ import {
   getPublishedAlbumBySlug,
   getPublishedArtistBySlug,
   getPublishedSongsByAlbumId,
+  formatJapaneseReleaseDate,
 } from '@/lib/music-catalog'
 import { buildOpenGraphImage, buildTwitterImage } from '@/lib/metadata'
 
@@ -44,7 +45,9 @@ export async function generateMetadata({
     }
   }
 
-  const description = `『${album.title}』は${artist.name}のアルバムです。I Wonderで歌詞・背景・文脈から読み解きます。`
+  const description =
+    album.album_descriptionm ??
+    `『${album.title}』は${artist.name}のアルバムです。I Wonderで歌詞・背景・文脈から読み解きます。`
 
   return {
     title: `${album.title} by ${artist.name}`,
@@ -100,6 +103,10 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
 
   const songs = await getPublishedSongsByAlbumId(album.id)
   const showDisc = songs.some((song) => (song.disc_number ?? 1) > 1)
+  const releaseDateLabel = formatJapaneseReleaseDate(album.release_date)
+  const albumDescription =
+    album.album_descriptionm ??
+    `『${album.title}』は${artist.name}のアルバムです。I Wonderで歌詞・背景・文脈から読み解きます。`
 
   return (
     <PageShell>
@@ -114,7 +121,12 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
               ]}
             />
             <div className={`${styles.heroCopy} ${styles.artistHeroCopy}`}>
-              <p className={styles.albumHeroArtistName}>{artist.name}</p>
+              <div className={styles.albumHeroMeta}>
+                <p className={styles.albumHeroArtistName}>{artist.name}</p>
+                {releaseDateLabel ? (
+                  <p className={styles.albumHeroReleaseDate}>{releaseDateLabel}</p>
+                ) : null}
+              </div>
               <h1 className={`${styles.heroTitle} ${styles.artistHeroTitle}`}>{album.title}</h1>
             </div>
           </div>
@@ -143,6 +155,16 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
       </section>
 
       <div className={styles.contentGrid}>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>アルバム解説</h2>
+          </div>
+
+          <div className={styles.bodyCard}>
+            <p className={styles.bodyNote}>{albumDescription}</p>
+          </div>
+        </section>
+
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>楽曲</h2>
