@@ -8,8 +8,8 @@ import { getPublishedAlbums, getPublishedArtists } from '@/lib/music-catalog'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Albums',
-  description: 'Browse all published albums in I Wonder.',
+  title: 'アルバム',
+  description: 'I Wonderに掲載されているアルバム一覧です。',
 }
 
 export default async function AlbumsPage() {
@@ -43,7 +43,7 @@ export default async function AlbumsPage() {
       <div className={styles.contentGrid}>
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h1 className={styles.sectionTitle}>Albums</h1>
+            <h1 className={styles.sectionTitle}>アルバム</h1>
           </div>
 
           {albumCards.length > 0 ? (
@@ -58,7 +58,7 @@ export default async function AlbumsPage() {
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>公開済みのアルバムはまだありません。</div>
+            <div className={styles.emptyState}>まだ公開されているアルバムはありません。</div>
           )}
         </section>
       </div>

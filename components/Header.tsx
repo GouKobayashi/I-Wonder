@@ -12,10 +12,10 @@ export function Header() {
       </div>
       <nav className={styles.headerNav} aria-label="Primary">
         <Link className={styles.headerLink} href="/artists">
-          Artists
+          アーティスト
         </Link>
         <Link className={styles.headerLink} href="/albums">
-          Albums
+          アルバム
         </Link>
       </nav>
     </header>

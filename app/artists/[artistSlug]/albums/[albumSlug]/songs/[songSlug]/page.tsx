@@ -13,6 +13,7 @@ import {
   getPublishedSongBySlug,
   getPublishedSongsByAlbumId,
 } from '@/lib/music-catalog'
+import { buildOpenGraphImage, buildTwitterImage } from '@/lib/metadata'
 
 import styles from '@/components/catalog-ui.module.css'
 
@@ -30,7 +31,7 @@ function getSongDescription(body: string | null, artistName: string, albumTitle:
     .map((line) => line.trim())
     .filter(Boolean)
 
-  const fallback = `${songTitle} by ${artistName} on ${albumTitle}.`
+  const fallback = `『${songTitle}』は${artistName}の『${albumTitle}』に収録された楽曲です。I Wonderで歌詞・背景・文脈から読み解きます。`
   const candidate = lines?.find((line) => !line.startsWith('#') && !line.startsWith('>')) ?? fallback
 
   return candidate.replace(/\*\*/g, '').replace(/\*/g, '').replace(/`/g, '').slice(0, 160)
@@ -76,6 +77,13 @@ export async function generateMetadata({
       title: `${song.title} by ${artist.name}`,
       description,
       type: 'website',
+      images: buildOpenGraphImage(album.cover_image_url, album.title),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${song.title} by ${artist.name}`,
+      description,
+      images: buildTwitterImage(album.cover_image_url, album.title),
     },
   }
 }
@@ -90,11 +98,11 @@ function buildSongLinks(artistName: string, albumTitle: string, songTitle: strin
     },
     {
       href: `https://music.apple.com/jp/search?term=${query}`,
-      label: 'Apple music',
+      label: 'Apple Music',
     },
     {
       href: `https://www.youtube.com/results?search_query=${query}`,
-      label: 'Youtube',
+      label: 'YouTube',
     },
   ]
 }
@@ -130,7 +138,7 @@ export default async function SongDetailPage({
         <div className={styles.heroBody}>
           <Breadcrumb
             items={[
-              { href: '/', label: 'Home' },
+              { href: '/', label: 'ホーム' },
               { href: `/artists/${artist.slug}`, label: artist.name },
               { href: `/artists/${artist.slug}/albums/${album.slug}`, label: album.title },
               { label: song.title },
@@ -150,14 +158,14 @@ export default async function SongDetailPage({
       <div className={styles.contentGrid}>
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Explanation</h2>
+            <h2 className={styles.sectionTitle}>解説</h2>
           </div>
           <SongBody body={song.body_explanation} />
         </section>
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Same Album</h2>
+            <h2 className={styles.sectionTitle}>同じアルバムの楽曲</h2>
           </div>
 
           <div className={styles.cardGrid}>

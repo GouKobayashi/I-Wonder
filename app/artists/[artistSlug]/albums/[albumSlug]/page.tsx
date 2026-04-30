@@ -12,6 +12,7 @@ import {
   getPublishedArtistBySlug,
   getPublishedSongsByAlbumId,
 } from '@/lib/music-catalog'
+import { buildOpenGraphImage, buildTwitterImage } from '@/lib/metadata'
 
 import styles from '@/components/catalog-ui.module.css'
 
@@ -43,7 +44,7 @@ export async function generateMetadata({
     }
   }
 
-  const description = `${album.title} by ${artist.name} on I Wonder.`
+  const description = `『${album.title}』は${artist.name}のアルバムです。I Wonderで歌詞・背景・文脈から読み解きます。`
 
   return {
     title: `${album.title} by ${artist.name}`,
@@ -55,6 +56,13 @@ export async function generateMetadata({
       title: `${album.title} by ${artist.name}`,
       description,
       type: 'website',
+      images: buildOpenGraphImage(album.cover_image_url, album.title),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${album.title} by ${artist.name}`,
+      description,
+      images: buildTwitterImage(album.cover_image_url, album.title),
     },
   }
 }
@@ -69,11 +77,11 @@ function buildAlbumLinks(artistName: string, albumTitle: string) {
     },
     {
       href: `https://music.apple.com/jp/search?term=${query}`,
-      label: 'Apple music',
+      label: 'Apple Music',
     },
     {
       href: `https://www.youtube.com/results?search_query=${query}`,
-      label: 'Youtube',
+      label: 'YouTube',
     },
   ]
 }
@@ -100,7 +108,7 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
           <div className={`${styles.heroBody} ${styles.artistHeroBody}`}>
             <Breadcrumb
               items={[
-                { href: '/', label: 'Home' },
+                { href: '/', label: 'ホーム' },
                 { href: `/artists/${artist.slug}`, label: artist.name },
                 { label: album.title },
               ]}
@@ -137,7 +145,7 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
       <div className={styles.contentGrid}>
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Songs</h2>
+            <h2 className={styles.sectionTitle}>楽曲</h2>
           </div>
 
           {songs.length > 0 ? (
@@ -154,7 +162,7 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>公開済み曲はまだありません。</div>
+            <div className={styles.emptyState}>まだ公開されている楽曲はありません。</div>
           )}
         </section>
       </div>

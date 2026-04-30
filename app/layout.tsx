@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/site";
+import { SITE_DESCRIPTION } from "@/lib/metadata";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
     default: 'I Wonder',
     template: '%s | I Wonder',
   },
-  description: 'I Wonder is a music database for reading foreign music through lyrics, background, and context.',
+  description: SITE_DESCRIPTION,
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
@@ -17,14 +18,12 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'I Wonder',
     title: 'I Wonder',
-    description:
-      'I Wonder is a music database for reading foreign music through lyrics, background, and context.',
+    description: SITE_DESCRIPTION,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'I Wonder',
-    description:
-      'I Wonder is a music database for reading foreign music through lyrics, background, and context.',
+    description: SITE_DESCRIPTION,
   },
 };
 

@@ -13,6 +13,7 @@ import {
   getPublishedArtistBySlug,
   getPublishedSongsByArtistId,
 } from '@/lib/music-catalog'
+import { buildOpenGraphImage, buildTwitterImage } from '@/lib/metadata'
 
 import styles from '@/components/catalog-ui.module.css'
 
@@ -38,7 +39,7 @@ export async function generateMetadata({
 
   const description =
     artist.bio_short ??
-    `Artist page for ${artist.name} on I Wonder, a music database for lyrics, background, and context.`
+    `${artist.name}の作品を、I Wonderで歌詞・背景・文脈から読み解きます。`
 
   return {
     title: artist.name,
@@ -50,6 +51,13 @@ export async function generateMetadata({
       title: artist.name,
       description,
       type: 'website',
+      images: buildOpenGraphImage(artist.artist_image_url, artist.name),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: artist.name,
+      description,
+      images: buildTwitterImage(artist.artist_image_url, artist.name),
     },
   }
 }
@@ -64,11 +72,11 @@ function buildArtistLinks(artistName: string) {
     },
     {
       href: `https://music.apple.com/jp/search?term=${query}`,
-      label: 'Apple music',
+      label: 'Apple Music',
     },
     {
       href: `https://www.youtube.com/results?search_query=${query}`,
-      label: 'Youtube',
+      label: 'YouTube',
     },
   ]
 }
@@ -91,12 +99,12 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
           <div className={`${styles.heroBody} ${styles.artistHeroBody}`}>
             <Breadcrumb
               items={[
-                { href: '/', label: 'Home' },
+                { href: '/', label: 'ホーム' },
                 { label: artist.name },
               ]}
             />
             <div className={`${styles.heroCopy} ${styles.artistHeroCopy}`}>
-              <p className={styles.heroKicker}>Artist</p>
+              <p className={styles.heroKicker}>アーティスト</p>
               <h1 className={`${styles.heroTitle} ${styles.artistHeroTitle}`}>{artist.name}</h1>
             </div>
           </div>
@@ -127,7 +135,7 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
       <div className={styles.contentGrid}>
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Albums</h2>
+            <h2 className={styles.sectionTitle}>アルバム</h2>
           </div>
 
           {albums.length > 0 ? (
@@ -142,13 +150,13 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>公開済みアルバムはまだありません。</div>
+            <div className={styles.emptyState}>まだ公開されているアルバムはありません。</div>
           )}
         </section>
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Songs</h2>
+            <h2 className={styles.sectionTitle}>楽曲</h2>
           </div>
 
           {highlightSongs.length > 0 ? (
@@ -166,7 +174,7 @@ export default async function ArtistPage({ params }: { params: Promise<RoutePara
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>公開済み曲はまだありません。</div>
+            <div className={styles.emptyState}>まだ公開されている楽曲はありません。</div>
           )}
         </section>
       </div>

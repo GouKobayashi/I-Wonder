@@ -1,14 +1,14 @@
 import { ArtistCard } from '@/components/ArtistCard'
 import { PageShell } from '@/components/PageShell'
 import { getPublishedArtists } from '@/lib/music-catalog'
+import { SITE_DESCRIPTION } from '@/lib/metadata'
 import type { Metadata } from 'next'
 
 import styles from '@/components/catalog-ui.module.css'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
-  description:
-    'I Wonder is a music database for reading foreign music through lyrics, background, and context.',
+  description: SITE_DESCRIPTION,
 }
 
 export default async function HomePage() {
@@ -18,9 +18,9 @@ export default async function HomePage() {
     <PageShell>
       <section className={styles.homeHero}>
         <div className={styles.homeHeroBody}>
-          <h1 className={styles.homeHeroTitle}>Welcome to I WONDER</h1>
+          <h1 className={styles.homeHeroTitle}>I Wonder</h1>
           <p className={styles.homeHeroLead}>
-            I Wonderは、外国圏の音楽を歌詞、バックグラウンド、コンテキストから読み解くための楽曲データベースです。
+            海外の音楽を、歌詞・背景・文脈から読み解くためのデータベースです。
           </p>
         </div>
       </section>
@@ -28,7 +28,7 @@ export default async function HomePage() {
       <div className={styles.contentGrid}>
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Artists</h2>
+            <h2 className={styles.sectionTitle}>アーティスト</h2>
           </div>
 
           {artists.length > 0 ? (
@@ -38,7 +38,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>公開済みのアーティストはまだありません。</div>
+            <div className={styles.emptyState}>まだ公開されているアーティストはありません。</div>
           )}
         </section>
       </div>
