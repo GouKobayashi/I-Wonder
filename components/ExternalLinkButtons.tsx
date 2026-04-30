@@ -82,7 +82,7 @@ export function ExternalLinkButtons({
               .join(' ')}
             href={link.href}
             target="_blank"
-            rel="noreferrer"
+            rel="noreferrer noopener"
           >
             {service ? <Logo service={service} /> : null}
             {link.label}

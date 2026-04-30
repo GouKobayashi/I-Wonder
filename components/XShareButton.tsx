@@ -37,7 +37,7 @@ export function XShareButton({ title, urlPath }: XShareButtonProps) {
       className={styles.xShareButton}
       href={shareUrl.toString()}
       target="_blank"
-      rel="noreferrer"
+      rel="noreferrer noopener"
       aria-label={`${title} を X でシェア`}
       title="Share on X"
     >

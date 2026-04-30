@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { randomUUID } from 'node:crypto'
 
@@ -11,6 +12,13 @@ import {
   isAdminConfigured,
   verifyAdminPassword,
 } from '@/lib/admin-auth'
+import {
+  checkAdminLoginRateLimit,
+  clearAdminLoginFailures,
+  formatAdminLoginLockoutMessage,
+  getAdminLoginRateLimitKey,
+  recordAdminLoginFailure,
+} from '@/lib/admin-login-rate-limit'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import type { FormState } from '@/app/admin/form-state'
 
@@ -55,6 +63,10 @@ function getOptionalFileValue(formData: FormData, key: string) {
     return { error: '画像ファイルを選択してください。' }
   }
 
+  if (value.type === 'image/svg+xml') {
+    return { error: 'SVG はアップロードできません。PNG, JPEG, WebP, GIF, AVIF を選択してください。' }
+  }
+
   const maxSizeInBytes = 10 * 1024 * 1024
   if (value.size > maxSizeInBytes) {
     return { error: '画像サイズは 10MB 以下にしてください。' }
@@ -95,6 +107,15 @@ function getConfigurationState(): FormState {
     status: 'error',
     message: 'ADMIN_PASSWORD が未設定です。.env.local に追加してください。',
   }
+}
+
+async function getAdminLoginRequestKey() {
+  const headerList = await headers()
+  const forwardedFor = headerList.get('x-forwarded-for')
+  const clientIp = forwardedFor?.split(',')[0]?.trim() ?? headerList.get('x-real-ip')
+  const userAgent = headerList.get('user-agent')
+
+  return getAdminLoginRateLimitKey(clientIp, userAgent)
 }
 
 function normalizeSupabaseErrorMessage(message: string) {
@@ -171,6 +192,16 @@ export async function loginAdmin(
     return getConfigurationState()
   }
 
+  const loginKey = await getAdminLoginRequestKey()
+  const rateLimitState = checkAdminLoginRateLimit(loginKey)
+
+  if (!rateLimitState.allowed) {
+    return {
+      status: 'error',
+      message: formatAdminLoginLockoutMessage(rateLimitState.retryAfterMs),
+    }
+  }
+
   const password = getStringValue(formData, 'password')
 
   if (!password) {
@@ -183,12 +214,17 @@ export async function loginAdmin(
   }
 
   if (!(await verifyAdminPassword(password))) {
+    const lockoutState = recordAdminLoginFailure(loginKey)
+
     return {
       status: 'error',
-      message: 'パスワードが違います。',
+      message: lockoutState.isLockedOut
+        ? formatAdminLoginLockoutMessage(Math.max(0, lockoutState.blockedUntil - Date.now()))
+        : 'パスワードが違います。',
     }
   }
 
+  clearAdminLoginFailures(loginKey)
   await createAdminSession()
   redirect('/admin')
 }

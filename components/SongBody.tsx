@@ -40,6 +40,15 @@ function normalizeRawUrl(url: string) {
   return url.replace(/[.,!?;:]+$/, '')
 }
 
+function isSafeExternalHref(href: string) {
+  try {
+    const parsed = new URL(href)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 function parseInline(text: string, keyPrefix: string): React.ReactNode[] {
   const nodes: React.ReactNode[] = []
   const pattern = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|https?:\/\/[^\s<>()]+)/g
@@ -58,13 +67,14 @@ function parseInline(text: string, keyPrefix: string): React.ReactNode[] {
       const linkText = token.slice(1, separatorIndex)
       const href = token.slice(separatorIndex + 2, -1)
       const isInternal = href.startsWith('/') || href.startsWith('#')
+      const isSafeExternal = !isInternal && isSafeExternalHref(href)
 
       nodes.push(
         isInternal ? (
           <Link key={`${keyPrefix}-link-${match.index}`} href={href} className={styles.bodyLink}>
             {linkText}
           </Link>
-        ) : (
+        ) : isSafeExternal ? (
           <a
             key={`${keyPrefix}-link-${match.index}`}
             href={href}
@@ -74,6 +84,8 @@ function parseInline(text: string, keyPrefix: string): React.ReactNode[] {
           >
             {linkText}
           </a>
+        ) : (
+          <span key={`${keyPrefix}-link-${match.index}`}>{linkText}</span>
         ),
       )
     } else if (token.startsWith('**') && token.endsWith('**')) {
