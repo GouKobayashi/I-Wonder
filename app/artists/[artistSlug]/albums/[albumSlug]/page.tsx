@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Metadata } from 'next'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -118,7 +119,9 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
             />
             <div className={`${styles.heroCopy} ${styles.artistHeroCopy}`}>
               <div className={styles.albumHeroMeta}>
-                <p className={styles.albumHeroArtistName}>{artist.name}</p>
+                <Link className={styles.albumHeroArtistName} href={`/artists/${artist.slug}`}>
+                  {artist.name}
+                </Link>
                 {releaseDateLabel ? (
                   <p className={styles.albumHeroReleaseDate}>{releaseDateLabel}</p>
                 ) : null}
@@ -153,6 +156,9 @@ export default async function AlbumPage({ params }: { params: Promise<RouteParam
       <div className={styles.contentGrid}>
         {album.album_description ? (
           <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>概要</h2>
+            </div>
             <SongBody body={album.album_description} />
           </section>
         ) : null}

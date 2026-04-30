@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import styles from './catalog-ui.module.css'
 
 function isFullLineTranslation(line: string) {
@@ -34,9 +36,13 @@ function stripSupplementMarker(line: string) {
   return line.replace(/^>\s?/, '').trim()
 }
 
+function normalizeRawUrl(url: string) {
+  return url.replace(/[.,!?;:]+$/, '')
+}
+
 function parseInline(text: string, keyPrefix: string): React.ReactNode[] {
   const nodes: React.ReactNode[] = []
-  const pattern = /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g
+  const pattern = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|https?:\/\/[^\s<>()]+)/g
   let lastIndex = 0
   let match: RegExpExecArray | null
 
@@ -46,16 +52,53 @@ function parseInline(text: string, keyPrefix: string): React.ReactNode[] {
     }
 
     const token = match[0]
-    const inner = token.slice(1, -1)
 
-    if (token.startsWith('**') && token.endsWith('**')) {
+    if (token.startsWith('[') && token.includes('](') && token.endsWith(')')) {
+      const separatorIndex = token.lastIndexOf('](')
+      const linkText = token.slice(1, separatorIndex)
+      const href = token.slice(separatorIndex + 2, -1)
+      const isInternal = href.startsWith('/') || href.startsWith('#')
+
+      nodes.push(
+        isInternal ? (
+          <Link key={`${keyPrefix}-link-${match.index}`} href={href} className={styles.bodyLink}>
+            {linkText}
+          </Link>
+        ) : (
+          <a
+            key={`${keyPrefix}-link-${match.index}`}
+            href={href}
+            className={styles.bodyLink}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {linkText}
+          </a>
+        ),
+      )
+    } else if (token.startsWith('**') && token.endsWith('**')) {
       nodes.push(
         <strong key={`${keyPrefix}-strong-${match.index}`}>{token.slice(2, -2)}</strong>,
       )
     } else if (token.startsWith('*') && token.endsWith('*')) {
+      const inner = token.slice(1, -1)
       nodes.push(<em key={`${keyPrefix}-em-${match.index}`}>{inner}</em>)
     } else if (token.startsWith('`') && token.endsWith('`')) {
+      const inner = token.slice(1, -1)
       nodes.push(<code key={`${keyPrefix}-code-${match.index}`}>{inner}</code>)
+    } else {
+      const href = normalizeRawUrl(token)
+      nodes.push(
+        <a
+          key={`${keyPrefix}-url-${match.index}`}
+          href={href}
+          className={styles.bodyLink}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          {href}
+        </a>,
+      )
     }
 
     lastIndex = match.index + token.length
